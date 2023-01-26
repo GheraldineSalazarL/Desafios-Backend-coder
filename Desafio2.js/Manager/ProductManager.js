@@ -3,27 +3,26 @@ import fs from 'fs';
 const path = './files/Productos.json'
 
 export default class ProductManager{
-    getProducts = async() =>{
+    getProducts = async() => {
         try {
-            if(fs.existsSync(path)){
-                const data= await fs.promises.readFile(path, 'utf-8');
-                console.log(data);
+            if (fs.existsSync(path)) {
+                const data = await fs.promises.readFile(path, 'utf-8');
                 const products = JSON.parse(data);
                 return products;
             }else{
                 return [];
             }
-        } catch (error) {
+        }  catch (error) {
             console.log(error);
         }
     }
 
-    addProduct = async (product) => {
+    addProduct = async(product) => {
         const products = await this.getProducts();
         if(products.length === 0){
             product.id = 1;
         } else{
-            product.id =  products[product.length-1].id+1;
+            product.id =  products[products.length -1].id + 1;
         }
         products.push(product);
 
@@ -33,29 +32,31 @@ export default class ProductManager{
 
     getProductById = async(productId) =>{
         const products = await this.getProducts();
-        const productFound = products.find(product => product.id = productId);
         
-        if(productFound===-1){
-            return "El producto no existe"
+        const productIndex=products.findIndex(e=>e.id===productId); 
+
+        if(productIndex === -1) { 
+            console.log("Notfound");
+            return;
         }
-        return productFound;
+
+        return(products[productIndex]);
     }
 
-    updateProduct = async(productId, fieldTitle, fieldDescription, fieldPrice, fieldThumbnail, fieldCode, fieldStock) => {
-        const productFound = await this.getProductById();
+    updateProduct = async(id, field, value) => {
         const products = await this.getProducts();
 
+        if(field==="id"){
+            return "error"
+        }
+
         const updatedProduct = products.map(prod =>
-            prod.id === productId
+            prod.id === id
               ? { ...prod, 
-                    title: fieldTitle,
-                    description: fieldDescription,
-                    price: fieldPrice,
-                    thumbnail: fieldThumbnail,
-                    code: fieldCode, 
-                    stock: fieldStock}
+                    [field]: value,
+                    }
               : prod
-          );
+        );             
 
         await fs.promises.writeFile(path, JSON.stringify(updatedProduct, null, '\t'));
         return updatedProduct; 
@@ -64,9 +65,13 @@ export default class ProductManager{
 
     deleteProduct = async(productId) => {
         const products = await this.getProducts();
-        const removedProduct =  products.slice(productId.index)
+        const product = await this.getProductById(productId);
 
-        await fs.promises.writeFile(path, JSON.stringify(removedProduct, null, '\t'));
+        let index = products.findIndex(index => index.id = productId)
+
+        const removedProduct =  products.splice(index,1)
+
+        await fs.promises.writeFile(path, JSON.stringify(products, null, '\t'));
         return removedProduct;
     }
     
