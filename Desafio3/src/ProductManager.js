@@ -46,9 +46,12 @@ export default class ProductManager {
     const products = await this.getAll();
     const product = await this.getById(id);
 
-    // let index = products.findIndex(index => index.id = id)
+    if (!product) {
+      return Error("Not found");
+    }
 
-    const removedProduct =  products.splice(product[Index],1)
+
+    const removedProduct =  products.splice(id-1,1)
 
     await promises.writeFile(path, JSON.stringify(products, null, '\t'));
     return removedProduct;    
