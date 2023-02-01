@@ -1,0 +1,62 @@
+[
+    {
+        "title": "Mueble de Cocina Alto",
+        "price": 700,
+        "thumbnail": "https://www.iconfinder.com/icons/2856258/furniture_interior_kitchen_icon",
+        "id": 1
+    },
+    {
+        "title": "Mueble de Cocina Bajo",
+        "price": 800,
+        "thumbnail": "https://www.iconfinder.com/icons/2856258/furniture_interior_kitchen_icon",
+        "id": 2
+    },
+    {
+        "title": "Closet",
+        "price": 600,
+        "thumbnail": "https://www.iconfinder.com/icons/2878327/appliance_clothes_furniture_hanger_household_room_icon",
+        "id": 3
+    },
+    {
+        "title": "Mueble de Baño",
+        "price": 100,
+        "thumbnail": "https://www.iconfinder.com/icons/2856283/bath_bathroom_bathtub_icon",
+        "id": 4
+    },
+    {
+        "title": "Comedor",
+        "price": 700,
+        "thumbnail": "https://www.iconfinder.com/icons/809104/dining_dining_room_dining_table_interior_icon",
+        "id": 5
+    },
+    {
+        "title": "Sofa",
+        "price": 900,
+        "thumbnail": "https://www.iconfinder.com/icons/3122696/appliance_chair_furniture_household_leather_wardrobe_icon",
+        "id": 6
+    },
+    {
+        "title": "Espejo",
+        "price": 20,
+        "thumbnail": "https://www.iconfinder.com/icons/2388605/decoration_furniture_interior_mirror_icon",
+        "id": 7
+    },
+    {
+        "title": "Cama",
+        "price": 600,
+        "thumbnail": "https://www.iconfinder.com/icons/5424405/bed_bedroom_furniture_sleep_sleeping_icon",
+        "id": 8
+    },
+    {
+        "title": "Mesa",
+        "price": 300,
+        "thumbnail": "https://www.iconfinder.com/icons/5408185/desk_diner_furniture_home_table_icon",
+        "id": 9
+    },
+    {
+        "title": "Escritorio",
+        "price": 700,
+        "thumbnail": "https://www.iconfinder.com/icons/3799072/furniture_house_living_room_icon",
+        "id": 10
+    }
+]
