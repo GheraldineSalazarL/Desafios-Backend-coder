@@ -12,7 +12,8 @@ const productManager = new ProductManager(path.join(dirname, 'productos.json'));
 
 app.use(express.urlencoded({extended: true}));
 
-app.get('/products', async (req, res) => {
+app.get('/products/:pid', async (req, res) => {
+    //query
     const products = await productManager.getAll();
     const {limit} = req.query;
 
@@ -25,17 +26,25 @@ app.get('/products', async (req, res) => {
         }
         res.send(productosFiltrados)
     } else {res.send({error:`Sólo exiten ${products.length} productos`})}
-
     console.log(limit)
-})
 
-app.get('/products/:pid', async (req,res)=> {
+    
+    //params
     const pid = Number(req.params.pid);
     const product = await productManager.getById(pid);
+
     if(!product) return res.send({error:'Producto no encontrado'});
     res.send(product);
     console.log(pid)
 })
+
+// app.get('/products/:pid', async (req,res)=> {
+//     const pid = Number(req.params.pid);
+//     const product = await productManager.getById(pid);
+//     if(!product) return res.send({error:'Producto no encontrado'});
+//     res.send(product);
+//     console.log(pid)
+// })
 
 
 app.listen(8080,()=>console.log("Listening on 8080"))
