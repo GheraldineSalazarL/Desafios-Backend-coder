@@ -26,16 +26,6 @@ app.get('/products', async (req, res) => {
         }
         res.send(productosFiltrados)
     } else {res.send({error:`Sólo exiten ${products.length} productos`})}
-    console.log(limit)
-
-    
-    //params
-    // const pid = Number(req.params.pid);
-    // const product = await productManager.getById(pid);
-
-    // if(!product) return res.send({error:'Producto no encontrado'});
-    // res.send(product);
-    // console.log(pid)
 })
 
 app.get('/products/:pid', async (req,res)=> {
@@ -43,7 +33,6 @@ app.get('/products/:pid', async (req,res)=> {
     const product = await productManager.getById(pid);
     if(!product) return res.send({error:'Producto no encontrado'});
     res.send(product);
-    console.log(pid)
 })
 
 
