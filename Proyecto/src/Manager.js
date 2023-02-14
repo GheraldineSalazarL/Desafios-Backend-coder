@@ -26,7 +26,6 @@ export default class Manager {
             items.push(data);
     
             await promises.writeFile(this.ruta, JSON.stringify(items, null, '\t'));
-            return data;
     }
 
     async getById(data) {
@@ -40,36 +39,27 @@ export default class Manager {
         return(items[index]);
     }
 
-    async saveId(cid, prod, pid){
-        
-        const cart = await manager.getById(cid);
+    async saveId(cid, pid){
+        const carts = await this.getAll();
+        const cart = await this.getById(cid);
 
-        if(!cart){
-            return "not found";
-        }
+        if(cart){
+            const products = cart.products;
+            const index=carts.findIndex(e=>e.id===cid)
 
-        const products = cart.products;
+            const indexProd = products.findIndex(prod => prod.product === pid)
+            const prod = products.find(prod => prod.product === pid)
 
-        const indexP=products.findIndex(p=>p.product===pid); 
-
-        if(indexP === -1) { 
-            const product = {
-                "product": pid,
-                "quantity": prod.quantity
+            if(indexProd > -1){
+                carts[index].products[indexProd] = { ...prod, quantity: prod.quantity +1} 
+            } else{ 
+                carts[index].products.push({product:pid, quantity:1})
             }
-            products.push(product);
-            await promises.writeFile(this.ruta, JSON.stringify(products, null, '\t'));
-            return "product";
-            
-        }else {
-            const newProduct = {
-                ...products[indexP],
-                "quantity": products[indexP].quantity + prod.quantity
-            }
-            products[indexP] = newProduct;
-            await promises.writeFile(this.ruta, JSON.stringify(products[indexP], null, '\t'));
-            return "newProduct";
-        };
+            await promises.writeFile(this.ruta, JSON.stringify(carts, null, '\t')); 
+            return "success";   
+        } else {
+            return "not found"
+        }            
     }
 
     async deleteById(id) {
