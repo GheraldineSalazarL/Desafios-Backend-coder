@@ -62,44 +62,40 @@ export default class Manager {
         }            
     }
 
+    async update(data, id) {
+        const items = await this.getAll();
+        const item = await this.getById(id);
+        const itemIndex=items.findIndex(e=>e.id===id);
+        
+        const newItem = { ...item, ...data }
+        items[itemIndex] = newItem;
+
+        await promises.writeFile(this.ruta, JSON.stringify(items, null, '\t'));
+        return item;
+    }
+
     async deleteById(id) {
-        const products = await this.getAll();
-        const product = await this.getById(id);
+        const items = await this.getAll();
 
-        if (!product) {
-            return Error("Not found");
+        const indexItem = items.findIndex(p => p.id === id)
+        
+        const removedItem=[];
+        if(indexItem!=-1){
+            removedItem === items.splice(indexItem,1);
+
+            await promises.writeFile(this.ruta, JSON.stringify(items, null, '\t'));
+            return removedItem;    
+        } else{
+            return removedItem === undefined;
         }
-
-
-        const removedProduct =  products.splice(id-1,1)
-
-        await promises.writeFile(path, JSON.stringify(products, null, '\t'));
-        return removedProduct;    
     }
 
-    async deleteAll() {
-        const products = await this.getAll();
+    // async deleteAll() {
+    //     const products = await this.getAll();
 
-        products.length = products.length - products.length;
+    //     products.length = products.length - products.length;
 
-        await promises.writeFile(path, JSON.stringify(products, null, '\t'));
-    }
-
-    async update(id, field, value) {
-        const products = await this.getAll();
-
-        if(field==="id") { return "error" };
-
-        const updatedProduct = 
-            products.map(prod =>
-                prod.id === id
-                ? { ...prod, 
-                        [field]: value,
-                        }
-                : prod
-            );  
-
-        await promises.writeFile(path, JSON.stringify(updatedProduct, null, '\t'));
-    }
+    //     await promises.writeFile(path, JSON.stringify(products, null, '\t'));
+    // }
 
 }

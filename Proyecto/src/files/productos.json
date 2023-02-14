@@ -1,0 +1,23 @@
+[
+	{
+		"title": "cocina",
+		"description": "roble",
+		"code": "ABC1",
+		"price": 100,
+		"status": true,
+		"stock": 1,
+		"category": "room",
+		"thumbnails": [],
+		"id": 1
+	},
+	{
+		"title": "escritorio",
+		"description": "roble",
+		"code": "ABC1",
+		"price": 100,
+		"status": true,
+		"stock": 200,
+		"category": "room",
+		"id": 3
+	}
+]

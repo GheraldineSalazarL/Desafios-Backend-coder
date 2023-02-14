@@ -1,10 +1,17 @@
 import { Router } from 'express'
+import Manager from '../Manager.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const router = Router();
 
-const products = [];
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 
-router.get('/', (req, res) => {
+const manager = new Manager(path.join(dirname, '../files/productos.json'));
+
+router.get('/', async (req, res) => {
+    const products = await manager.getAll();
     const {limit} = req.query;
 
     if(!limit) return res.send({products});
@@ -18,25 +25,15 @@ router.get('/', (req, res) => {
     } else {res.send({status: 'error', message:`Sólo exiten ${products.length} productos`})}
 });
 
-router.get('/:pid', (req,res)=> {
+router.get('/:pid', async(req,res)=> {
     const pid = Number(req.params.pid);
+    const product = await manager.getById(pid);
     
-    const productIndex=products.findIndex(e=>e.id===pid); 
-    if(productIndex === -1) { 
-        res.send({status: 'error', message:`Producto no encontrado`})
-        return;
-    }
-    res.send(products[productIndex]);
+    product ? res.send(product) : res.send({status: 'error', message:`Producto no encontrado`})
 })
 
-router.post('/', (req, res) => {
-    const product = req.body
-
-    if(products.length === 0){
-        product.id = 1;
-    } else{
-        product.id =  products[products.length -1].id + 1;
-    }
+router.post('/', async (req, res) => {
+    const product = req.body;
 
     if(!product.title || !product.description || !product.code || !product.price || !product.stock || !product.category){
         return res.send({status: 'error', message:'Valores incompletos'});
@@ -51,42 +48,28 @@ router.post('/', (req, res) => {
     if(typeof product.category !== "string"){return res.send({status: 'error', message:'category debe ser un string'})};
     if(product.thumbnails){if(typeof product.thumbnails !== "object"){return res.send({status: 'error', message:'thumbnails debe ser un array'})}};
 
-    products.push(product);
-
+    await manager.save(product);
     res.send({status: 'sucess', message:'Producto creado'});
 });
 
-router.put('/:pid', (req,res)=> {
+router.put('/:pid', async (req,res)=> {
     const productReq = req.body;
     const pid = Number(req.params.pid);
 
-    const productIndex=products.findIndex(e=>e.id===pid);
+    if(productReq.id) {return res.send({status: 'error', message:'el id no se puede modificar'})};
 
-    let product = products[productIndex];
+    const product = await manager.update(productReq, pid);
 
-    if(productReq.id) {return res.send({status: 'error', message:'el id no se puede modificar'});}
-
-    const newProduct = { ...product, ...productReq }
-
-    if(product){
-        products[productIndex] = newProduct;
-        res.send({status: 'sucess', message:'Producto actualizado'});
-    } else{
-        res.send({status: 'error', message: 'Producto no encontrado'});
-    }
+    product ? res.send({status: 'sucess', message:'Producto actualizado'}) : res.send({status: 'error', message:`Producto no encontrado`})
 });
 
-router.delete('/:pid', (req,res)=> {
+router.delete('/:pid', async (req,res)=> {
     const pid = Number(req.params.pid);
 
-    const index = products.findIndex(p => p.id === pid)
+    const removedProduct = await manager.deleteById(pid)
 
-    if(index!=-1){
-        products.splice(index,1);
-        res.send({status: 'sucess', message:'Producto eliminado'});
-    } else{
-        res.send({status: 'error', message: 'Producto no encontrado'});
-    }
+    removedProduct ?  res.send({status: 'sucess', message:'Producto eliminado'}) : res.send({status: 'error', message: 'Producto no encontrado'})
+
 });
 
 export default router;
