@@ -34,12 +34,6 @@ io.on('connection', async socket => {
     io.emit('products', products);
 
     socket.on('message',  async  data => {
-        
-        if(!data.title || !data.description || !data.code || !data.price || !data.stock || !data.category){
-            window.alert('Valores incompletos');
-            return
-        } 
-
         await manager.save(data);
         
         io.emit('products', products);
