@@ -41,7 +41,7 @@ io.on('connection', async socket => {
     
     socket.on('spliced', async data => {
         await manager.deleteById(data)
-        const products = await manager.getAll();
+        // const products = await manager.getAll();
         io.emit('products', products);
     })
 });
