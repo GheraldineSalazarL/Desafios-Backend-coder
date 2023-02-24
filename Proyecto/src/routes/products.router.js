@@ -1,14 +1,16 @@
 import { Router } from 'express'
 import Manager from '../Manager.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import __dirname from '../utils.js';
+// import path from 'path';
+// import { fileURLToPath } from 'url';
 
 const router = Router();
 
-const filename = fileURLToPath(import.meta.url);
-const dirname = path.dirname(filename);
+// const filename = fileURLToPath(import.meta.url);
+// const dirname = path.dirname(filename);
 
-const manager = new Manager(path.join(dirname, '../files/productos.json'));
+// const manager = new Manager(path.join(dirname, '../files/productos.json'));
+const manager = new Manager(`${__dirname}/files/productos.json`);
 
 router.get('/', async (req, res) => {
     const products = await manager.getAll();

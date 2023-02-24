@@ -19,5 +19,27 @@
 		"stock": 200,
 		"category": "room",
 		"id": 3
+	},
+	{
+		"title": "sillon",
+		"description": "roble",
+		"code": "ABC1",
+		"price": 100,
+		"status": true,
+		"stock": 10,
+		"category": "room",
+		"thumbnails": [],
+		"id": 4
+	},
+	{
+		"title": "Cama",
+		"description": "Roble con respaldo",
+		"code": "AC12",
+		"price": "381.92",
+		"status": true,
+		"stock": "21",
+		"category": "Room",
+		"thumbnails": "",
+		"id": 5
 	}
 ]

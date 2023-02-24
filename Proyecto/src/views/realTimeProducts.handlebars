@@ -1,0 +1,28 @@
+
+
+<div class="container">
+    <h1>Lista de Productos en Tiempo Real</h1>
+
+    <div class="formu">
+        <h3>Crear nuevo producto</h3>
+        <div class="inputs">
+            <input id="title" class="title" type="text" placeholder="Nombre">
+            <input id="code" type="text" placeholder="Código">
+            <input id="price" type="text" placeholder="Precio">
+            <input id="stock" type="text" placeholder="Stock">
+            <input id="category" type="text" placeholder="Categoría">
+            <input id="thumbnails" type="text" placeholder="thumbnails (URL)">
+            <input class="texarea" id="description" type="text" placeholder="Descipción">
+        </div>
+        <button class="btn-create" id="button" type="submit">Crear</button>
+    </div>
+
+    <div id="products-container" class="products-container">
+    </div>
+
+</div>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/realTimeProducts.js"></script>
+<script src="https://kit.fontawesome.com/e9d32d96ee.js" crossorigin="anonymous"></script>
