@@ -1,45 +1,35 @@
 [
 	{
-		"title": "cocina",
-		"description": "roble",
-		"code": "ABC1",
-		"price": 100,
+		"title": "Mueble cocina alto",
+		"description": "Mueble de cocina alto color Sahara",
+		"code": "MC1",
+		"price": "500",
 		"status": true,
-		"stock": 1,
-		"category": "room",
+		"stock": "4",
+		"category": "Cocina",
 		"thumbnails": [],
 		"id": 1
 	},
 	{
-		"title": "escritorio",
-		"description": "roble",
-		"code": "ABC1",
-		"price": 100,
+		"title": "Comedor Cahoba",
+		"description": "Comedor 6 puestos color cahoba",
+		"code": "CP6",
+		"price": "840",
 		"status": true,
-		"stock": 200,
-		"category": "room",
-		"id": 3
-	},
-	{
-		"title": "sillon",
-		"description": "roble",
-		"code": "ABC1",
-		"price": 100,
-		"status": true,
-		"stock": 10,
-		"category": "room",
+		"stock": "14",
+		"category": "Comedor",
 		"thumbnails": [],
-		"id": 4
+		"id": 2
 	},
 	{
-		"title": "Cama",
-		"description": "Roble con respaldo",
-		"code": "AC12",
-		"price": "381.92",
+		"title": "Closet doble ",
+		"description": "Closet doble puerta deslizable",
+		"code": "CD1",
+		"price": "690",
 		"status": true,
-		"stock": "21",
+		"stock": "3",
 		"category": "Room",
-		"thumbnails": "",
-		"id": 5
+		"thumbnails": [],
+		"id": 3
 	}
 ]

@@ -18,14 +18,15 @@ export default class Manager {
 
     async save(data) {
         const items = await this.getAll();
-            if(items.length === 0){
-                data.id = 1;
-            } else{
-                data.id =  items[items.length -1].id + 1;
-            }
-            items.push(data);
-    
-            await promises.writeFile(this.ruta, JSON.stringify(items, null, '\t'));
+        if(items.length === 0){
+            data.id = 1;
+        } else{
+            data.id =  items[items.length -1].id + 1;
+        }
+        items.push(data);
+
+        const result = await promises.writeFile(this.ruta, JSON.stringify(items, null, '\t'));
+        return result;
     }
 
     async getById(data) {

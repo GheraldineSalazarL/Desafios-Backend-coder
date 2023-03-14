@@ -1,11 +1,14 @@
 import express from "express";
-import productsRouter from './routes/products.router.js';
-import cartsRouter from './routes/carts.router.js';
 import handlebars from 'express-handlebars';
+import mongoose from 'mongoose';
 import __dirname from './utils.js';
 import { Server } from 'socket.io';
-import viewsRouter from './routes/views.router.js';
-import Manager from './Manager.js';
+import productsRouter from './routes/api/products.router.js';
+import cartsRouter from './routes/api/carts.router.js';
+import viewsRouter from './routes/web/views.router.js';
+import Manager from './dao/fileManagers/Manager.js';
+import Products from './dao/dbManagers/products.js';
+import Chat from './dao/dbManagers/messages.js'
 
 const app = express ();
 
@@ -26,22 +29,51 @@ const server = app.listen(8080, () => console.log('Listening'));
 const io = new Server(server);
 
 const manager = new Manager(`${__dirname}/files/productos.json`);
+const productsManager = new Products();
+const chatManager = new Chat();
+
+const messages = [];
 
 io.on('connection', async socket => {
     console.log("Cliente conectado")
     
+    //web productos
     const products = await manager.getAll();
+    // await productsManager.getAll();
     io.emit('products', products);
 
-    socket.on('message',  async  data => {
+    socket.on('newProduct',  async  data => {
+        await productsManager.save(data);
         await manager.save(data);
         
         io.emit('products', products);
     })
     
     socket.on('spliced', async data => {
-        await manager.deleteById(data)
-        // const products = await manager.getAll();
+        await productsManager.deleteById(data);
+        await manager.deleteById(data);
+
         io.emit('products', products);
     })
+
+
+    //web chat
+    socket.on('message', async data => {
+        messages.push(data);
+        await chatManager.save(data);
+        io.emit('messageLogs', messages);
+    });
+
+    socket.on('authenticated', data => {
+        socket.emit('messageLogs', messages);
+        socket.broadcast.emit('newUserConnected', data);
+    });
 });
+
+
+
+try{
+    await mongoose.connect('mongodb+srv://gheeraldin:0TY8Sm5YXeGmNvoD@cluster0.jckhxnb.mongodb.net/?retryWrites=true&w=majority') 
+} catch(error){
+    console.log(`Cannot connect to database: ${error}`)
+}

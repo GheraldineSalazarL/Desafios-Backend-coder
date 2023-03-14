@@ -10,6 +10,7 @@ const thumbnails = document.getElementById('thumbnails');
 const button = document.getElementById('button');
 
 const productsContainer = document.getElementById('products-container');
+const imagePlaceholder = 'https://via.placeholder.com/600x400';
 
 socket.on('products', data => {
     
@@ -18,7 +19,7 @@ socket.on('products', data => {
         productsContainer.innerHTML += `<div class="product-container">
                                     <h2>Nombre: ${prod.title}</h2>
                                     <div class="img-info-product">
-                                        <img src=${prod.thumbnails} alt="">
+                                        <img src=${prod.thumbnails || imagePlaceholder} />
                                         <div class="info-product">
                                             <p>Descipción: ${prod.description}</p>
                                             <p>Código: ${prod.code}</p>
@@ -47,10 +48,10 @@ button.onclick = (e) =>{
         status: true,
         stock: stock.value,
         category: category.value,
-        thumbnails: thumbnails.value
+        thumbnails: []
     }
     
-    socket.emit('message', newProduct);
+    socket.emit('newProduct', newProduct);
     
     resetInputs();
 };
