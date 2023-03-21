@@ -4,7 +4,14 @@ const cartsCollections = 'carts';
 
 const cartsSchema = new mongoose.Schema({
     products: {
-        type: Array,
+        type:[
+            {
+                product:{
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'products'
+                } 
+            }
+        ],
         required: true
     },
     id: {
@@ -13,5 +20,9 @@ const cartsSchema = new mongoose.Schema({
         unique: true
     }
 });
+
+cartsSchema.pre('find', function(){
+    this.populate('products.product');
+}) 
 
 export const cartsModel = mongoose.model(cartsCollections, cartsSchema)

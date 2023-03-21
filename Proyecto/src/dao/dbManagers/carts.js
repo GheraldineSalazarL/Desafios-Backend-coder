@@ -44,6 +44,57 @@ export default class Carts {
             const result = await cartsModel.updateOne({id: {$eq: cid}}, {$push:{products:{product:pid, quantity:1}}});
             return result;
         }
-      
     }  
+
+    deleteId = async (cid, pid) => {
+        const cart = await this.getById(cid);
+
+        if (!cart) return;
+
+        const products = cart.products;
+        const indexProd = products.findIndex(prod => prod.product === pid);
+
+        if(indexProd > -1){
+            const result = await cartsModel.updateOne({ id: cid }, { $pull: { products: { product: pid }}});
+            return result;
+        } else{ 
+            const result = "error";
+            return result;
+        }
+    }
+
+    update = async (cid, productsUpdate) => {
+        const cart = await this.getById(cid);
+
+        if (!cart) return;
+
+        const result = await cartsModel.updateOne({ id: cid }, { products: productsUpdate});
+        return result;
+    }
+
+    updateQuantity = async (cid, pid, quantityUpdate) => {
+        const cart = await this.getById(cid);
+
+        if (!cart) return;
+
+        const productos = cart.products;
+        const indexProd = productos.findIndex(prod => prod.product === pid);
+
+        if(indexProd > -1){
+            const result = await cartsModel.updateOne({id: {$eq: cid}, "products.product" : pid}, {$inc:{"products.$.quantity" : quantityUpdate.quantity}});
+            return result;
+        } else{ 
+            const result = "error";
+            return result;
+        }
+    }
+
+    deleteAll = async (cid) => {
+        const cart = await this.getById(cid);
+
+        if (!cart) return;
+
+        const result = await cartsModel.updateOne({ id: cid }, { products: []});
+        return result;
+    }
 }

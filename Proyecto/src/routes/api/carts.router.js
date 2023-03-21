@@ -35,7 +35,7 @@ router.get('/:cid', async(req,res)=> {
     try{
         const cart = await cartsManager.getById(cid);
 
-        cart ? res.send(cart.products) : res.send({status: 'error', message:`Carrito no encontrado`})
+        cart ? res.send({status: 'sucess', payload: cart.products}) : res.send({status: 'error', message:`Carrito no encontrado`})
     } catch(error){
         res.status(500).send({error});
     }
@@ -56,5 +56,68 @@ router.post('/:cid/product/:pid', async (req, res) => {
 
     // await manager.saveId(cid, pid);
 });
+
+router.delete('/:cid/product/:pid', async (req, res) => {
+    const cid = Number(req.params.cid);
+    const pid = Number(req.params.pid);
+
+    try{
+        const resp = await cartsManager.deleteId(cid, pid);
+        
+        resp  
+            ? resp === "error" 
+                ? res.send({status: 'error', message: 'Producto no encontrado dentro del carrito'})
+                : res.send({status: 'sucess', message:'Producto eliminado del carrito'})
+            : res.send({status: 'error', message: 'Carrito no encontrado'});        
+        
+    } catch(error){
+        res.status(500).send({error});
+    }
+});
+
+router.put('/:cid', async(req,res)=> {
+    const productsUpdate = req.body;
+    const cid = Number(req.params.cid);
+
+    try{
+        const cart = await cartsManager.update(cid, productsUpdate);
+        console.log(cart)
+        cart ? res.send({status: 'sucess', message:`Carrito modificado`}) : res.send({status: 'error', message:`Carrito no encontrado`})
+    } catch(error){
+        res.status(500).send({error});
+    }
+});
+
+router.put('/:cid/product/:pid', async (req, res) => {
+    const cid = Number(req.params.cid);
+    const pid = Number(req.params.pid);
+    const quantityUpdate = req.body;
+
+    try{
+        const resp = await cartsManager.updateQuantity(cid, pid, quantityUpdate);
+
+        resp  
+            ? resp === "error" 
+                ? res.send({status: 'error', message: 'Producto no encontrado dentro del carrito'})
+                : res.send({status: 'sucess', message:'Cantidad del producto modificado'})
+            : res.send({status: 'error', message: 'Carrito no encontrado'});     
+
+    } catch(error){
+        res.status(500).send({error});
+    }
+});
+
+router.delete("/:cid", async (req, res) => {
+    const cid = Number(req.params.cid);
+
+    try{
+        const resp = await cartsManager.deleteAll(cid);
+
+        resp ? res.send({status: 'sucess', message:`Productos eliminados del carrito`}) : res.send({status: 'error', message:`Carrito no encontrado`})
+    } catch(error){
+        res.status(500).send({error});
+    }
+});
+
 
 export default router;
