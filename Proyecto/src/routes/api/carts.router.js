@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import Manager from '../../dao/fileManagers/Manager.js';
+// import Manager from '../../dao/fileManagers/Manager.js';
 import __dirname from '../../utils.js';
 import Carts from '../../dao/dbManagers/carts.js' 
 
@@ -7,7 +7,7 @@ const router = Router();
 
 const cartsManager = new Carts();
 
-const manager = new Manager(`${__dirname}/files/carritos.json`);
+// const manager = new Manager(`${__dirname}/files/carritos.json`);
 
 // router.get('/', async (req, res) => {
 //     const carts = await manager.getAll();
@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
         res.status(500).send({error});
     }
 
-    await manager.save(cart); 
+    // await manager.save(cart); 
 });
 
 router.get('/:cid', async(req,res)=> {
@@ -54,7 +54,7 @@ router.post('/:cid/product/:pid', async (req, res) => {
         res.status(500).send({error});
     }
 
-    await manager.saveId(cid, pid);
+    // await manager.saveId(cid, pid);
 });
 
 export default router;

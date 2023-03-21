@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import Manager from '../../dao/fileManagers/Manager.js';
+// import Manager from '../../dao/fileManagers/Manager.js';
 import __dirname from '../../utils.js';
 import Products from '../../dao/dbManagers/products.js';
 
@@ -7,31 +7,43 @@ const router = Router();
 
 const productsManager = new Products();
 
-const manager = new Manager(`${__dirname}/files/productos.json`);
+// const manager = new Manager(`${__dirname}/files/productos.json`);
 
-router.get('/', async (req, res) => {
-    const {limit} = req.query;
+router.get('/', async (req, res) => {  
+    const { limit = 2, page = 1, sort, category, stock} = req.query;
+
+    let query = {};
+    if(category) query = {category : `${category}`};
+    if(stock) query = {stock : `${stock}`};
+    if(category && stock) query = {$and: [ {category : `${category}`},{stock : `${stock}`} ]}  
 
     try{
-        const products = await productsManager.getAll(limit); 
-        res.send({ status: 'success', payload: products })
+        const result = await productsManager.getAllPage(limit, page, sort, query)
 
+        const products = result.docs; 
+        result.prevLink = result.hasPrevPage
+            ? `http://localhost:8080/api/products?limit=${limit}&page=${result.prevPage}`
+            : null;
+        result.nextLink = result.hasNextPage
+            ? `http://localhost:8080/api/products?limit=${limit}&page=${result.nextPage}`
+            : null;
+
+        res.send({
+            status: 'success',
+            payload: products, 
+            totalPages: result.totalPages,
+            prevPage: result.prevPage,
+            nextPage: result.nextPage,
+            page: result.page,
+            hasPrevPage: result.hasPrevPage,
+            hasNextPage: result.hasNextPage,
+            prevLink: result.prevLink,
+            nextLink: result.nextLink
+        });
     } catch(error){
         res.status(500).send({error});
     }
 
-    // const products = await manager.getAll();
-
-    // if(!limit) return res.send({products});
-
-    // const productsFilter = []
-    // if(limit <= products.length){
-    //     for(var i=0; i<limit; i++){
-    //         productsFilter.push(products[i])
-    //     }
-    //     res.send(productsFilter)
-    // } else {res.send({status: 'error', message:`Sólo exiten ${products.length} productos`})}
-    
 });
 
 router.get('/:pid', async(req,res)=> {
@@ -72,7 +84,7 @@ router.post('/', async (req, res) => {
     if(!product.status) {product.status = true};
     if(!product.thumbnails) {product.thumbnails = []}
 
-    await manager.save(product);
+    // await manager.save(product);
 });
 
 router.put('/:pid', async (req,res)=> {
@@ -89,7 +101,7 @@ router.put('/:pid', async (req,res)=> {
         res.status(500).send({status: 'error'});
     }
 
-    await manager.update(productReq, pid);
+    // await manager.update(productReq, pid);
 });
 
 router.delete('/:pid', async (req,res)=> {
@@ -103,7 +115,7 @@ router.delete('/:pid', async (req,res)=> {
         res.status(500).send({status: 'error', message:'errorifico'});
     }
 
-    const removedProduct = await manager.deleteById(pid)
+    // const removedProduct = await manager.deleteById(pid)
 });
 
 export default router;

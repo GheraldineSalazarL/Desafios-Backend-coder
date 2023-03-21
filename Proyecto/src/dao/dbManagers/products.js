@@ -16,6 +16,18 @@ export default class Products {
         }
     }
 
+    getAllPage = async (limit, page, sort, query) => {
+
+        if(sort){
+            const result = await productsModel.paginate(query, { limit, page, sort:{price: sort},  lean: true})
+            return result;
+        } else {
+            const result = await productsModel.paginate(query, { limit, page,  lean: true})
+            return result;
+        }
+        
+    }
+
     getById = async (pid) => {
         const product = await productsModel.findOne({id:pid});
         return product;

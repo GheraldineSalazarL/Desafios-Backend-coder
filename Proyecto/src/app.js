@@ -6,7 +6,7 @@ import { Server } from 'socket.io';
 import productsRouter from './routes/api/products.router.js';
 import cartsRouter from './routes/api/carts.router.js';
 import viewsRouter from './routes/web/views.router.js';
-import Manager from './dao/fileManagers/Manager.js';
+// import Manager from './dao/fileManagers/Manager.js';
 import Products from './dao/dbManagers/products.js';
 import Chat from './dao/dbManagers/messages.js'
 
@@ -28,7 +28,7 @@ app.use('/', viewsRouter);
 const server = app.listen(8080, () => console.log('Listening'));
 const io = new Server(server);
 
-const manager = new Manager(`${__dirname}/files/productos.json`);
+// const manager = new Manager(`${__dirname}/files/productos.json`);
 const productsManager = new Products();
 const chatManager = new Chat();
 
@@ -38,22 +38,24 @@ io.on('connection', async socket => {
     console.log("Cliente conectado")
     
     //web productos
-    const products = await manager.getAll();
-    // await productsManager.getAll();
+    // const products = await manager.getAll();
+    const products = await productsManager.getAll();
+
     io.emit('products', products);
 
     socket.on('newProduct',  async  data => {
         await productsManager.save(data);
-        await manager.save(data);
-        
-        io.emit('products', products);
+        // await manager.save(data);
+        const productsAll = await productsManager.getAll();
+        io.emit('products', productsAll);
     })
     
     socket.on('spliced', async data => {
         await productsManager.deleteById(data);
-        await manager.deleteById(data);
+        // await manager.deleteById(data);
 
-        io.emit('products', products);
+        const productsAll = await productsManager.getAll();
+        io.emit('products', productsAll);
     })
 
 
@@ -70,10 +72,11 @@ io.on('connection', async socket => {
     });
 });
 
-
-
 try{
     await mongoose.connect('mongodb+srv://gheeraldin:0TY8Sm5YXeGmNvoD@cluster0.jckhxnb.mongodb.net/?retryWrites=true&w=majority') 
 } catch(error){
     console.log(`Cannot connect to database: ${error}`)
 }
+
+
+
