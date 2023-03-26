@@ -29,39 +29,39 @@ export default class Products {
     }
 
     getById = async (pid) => {
-        const product = await productsModel.findOne({id:pid});
-        return product;
+        const product = await productsModel.findOne({_id:pid});
+        if(product === null) {return product} else {return product.toObject()};
     }
 
     save = async(product) => {
         const products = await this.getAll();
 
-        if(products.length === 0){
-            product.id = 1;
-        } else{
-            product.id =  products[products.length -1].id + 1;
-        }
+        // if(products.length === 0){
+        //     product.id = 1;
+        // } else{
+        //     product.id =  products[products.length -1].id + 1;
+        // }
 
         const result = await productsModel.create(product);
         return result;
     }
 
-    update = async(data, id) => {
-        const item = await this.getById(id);
+    update = async(productReq, pid) => {
+        const item = await this.getById(pid);
 
-        if(item){
-            const updateItem = productsModel.updateOne({id: {$eq:id}}, {$set:data});  
-            return updateItem;    
-        } 
+        if (!item) return;
+
+        const updateItem = productsModel.updateOne({_id: {$eq:pid}}, {$set:productReq});  
+        return updateItem; 
         
     }
 
-    deleteById = async(id) => {
-        const item = await this.getById(id);
+    deleteById = async(pid) => {
+        const item = await this.getById(pid);
+
+        if (!item) return;
         
-        if(item){
-            const removedItem = productsModel.deleteOne({id:id});  
-            return removedItem;    
-        } 
+        const removedItem = productsModel.deleteOne({_id:pid});  
+        return removedItem; 
     }
 }

@@ -1,0 +1,24 @@
+<div class="container">
+    {{#if cart}}
+    <h1>Carrito de compras</h1>
+    {{#each cart.products}}
+        <div class="product-container">
+            <div class="img-info-product">
+                <img src={{this.product.thumbnails}}>
+                <div class="info-product">
+                    <h3>Nombre: {{this.product.title}}</h3>
+                    <p>Descipción: {{this.product.description}}</p>
+                    <p>Precio: {{this.product.price}}</p>
+                    <p>Cantidad: {{this.quantity}}</p>
+                </div>
+            </div>
+            <hr>
+        </div>
+    {{/each}}
+    {{else}}
+    <p>No hay elementos en el carrito</p>
+    {{/if}}
+
+</div>
+
+<script src="https://kit.fontawesome.com/e9d32d96ee.js" crossorigin="anonymous"></script>

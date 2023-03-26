@@ -76,7 +76,9 @@ try{
     await mongoose.connect('mongodb+srv://gheeraldin:0TY8Sm5YXeGmNvoD@cluster0.jckhxnb.mongodb.net/?retryWrites=true&w=majority') 
 } catch(error){
     console.log(`Cannot connect to database: ${error}`)
-}
+};
+
+
 
 
 

@@ -10,31 +10,28 @@ const cartsManager = new Carts();
 // const manager = new Manager(`${__dirname}/files/carritos.json`);
 
 // router.get('/', async (req, res) => {
-//     const carts = await manager.getAll();
+//     const carts = await cartsManager.getAll();
 //     res.send({carts});
 // });
 
 router.post('/', async (req, res) => {
-    const cart = { products: [] }
+    // const cart = { products: [] }
 
     try{
-        const result = await cartsManager.save(cart);
+        const result = await cartsManager.save();
         res.send({status: 'sucess', message:'Carrito creado', payload: result});
     } catch(error){
         res.status(500).send({error});
     }
-
-    // await manager.save(cart); 
 });
 
 router.get('/:cid', async(req,res)=> {
-    const cid = Number(req.params.cid);
+    const cid = req.params.cid;
 
     // await manager.getById(cid)
 
     try{
         const cart = await cartsManager.getById(cid);
-
         cart ? res.send({status: 'sucess', payload: cart.products}) : res.send({status: 'error', message:`Carrito no encontrado`})
     } catch(error){
         res.status(500).send({error});
@@ -42,8 +39,8 @@ router.get('/:cid', async(req,res)=> {
 });
 
 router.post('/:cid/product/:pid', async (req, res) => {
-    const cid = Number(req.params.cid);
-    const pid = Number(req.params.pid);
+    const cid = req.params.cid;
+    const pid = req.params.pid;
 
     try{
         const resp = await cartsManager.saveId(cid, pid);
@@ -58,8 +55,8 @@ router.post('/:cid/product/:pid', async (req, res) => {
 });
 
 router.delete('/:cid/product/:pid', async (req, res) => {
-    const cid = Number(req.params.cid);
-    const pid = Number(req.params.pid);
+    const cid = req.params.cid;
+    const pid = req.params.pid;
 
     try{
         const resp = await cartsManager.deleteId(cid, pid);
@@ -77,7 +74,7 @@ router.delete('/:cid/product/:pid', async (req, res) => {
 
 router.put('/:cid', async(req,res)=> {
     const productsUpdate = req.body;
-    const cid = Number(req.params.cid);
+    const cid = req.params.cid;
 
     try{
         const cart = await cartsManager.update(cid, productsUpdate);
@@ -89,8 +86,8 @@ router.put('/:cid', async(req,res)=> {
 });
 
 router.put('/:cid/product/:pid', async (req, res) => {
-    const cid = Number(req.params.cid);
-    const pid = Number(req.params.pid);
+    const cid = req.params.cid;
+    const pid = req.params.pid;
     const quantityUpdate = req.body;
 
     try{
@@ -108,7 +105,7 @@ router.put('/:cid/product/:pid', async (req, res) => {
 });
 
 router.delete("/:cid", async (req, res) => {
-    const cid = Number(req.params.cid);
+    const cid = req.params.cid;
 
     try{
         const resp = await cartsManager.deleteAll(cid);

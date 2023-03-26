@@ -1,0 +1,51 @@
+<div class="container">
+    <div class="top">
+        <h1>Nuestros Productos</h1>
+        <a class="cart" href="/cart">
+            <i class="fa-solid fa-cart-shopping fa-2xl"></i>
+        </a>
+    </div>
+    <div class="products-container">
+        {{#each products}}
+        <div class="product-container">
+            <h3>Nombre: {{this.title}}</h3>
+            <div class="img-info-product">
+                <img src={{this.thumbnails}} alt="">
+                <div class="info-product">
+                    <p>Descipción: {{this.description}}</p>
+                    <p>Código: {{this.code}}</p>
+                    <p>Precio: {{this.price}}</p>
+                    <p>Stock: {{this.stock}}</p>
+                    <p>Categoría: {{this.category}}</p>
+                    <p>Id: {{this._id}}</p>
+                    <form action="/cart/add/{{this._id}}" method="post">
+                        <button type="submit">Agregar al carrito</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    <div class="controllers">
+        {{#if hasPrevPage}}
+            <a href="/products?page={{prevPage}}">
+                <i class="fa-solid fa-circle-left fa-xl"></i>
+            </a>
+        {{/if}}
+
+        <h3>{{Page}}</h3>
+
+        {{#if hasNextPage}}
+            <a href="/products?page={{nextPage}}">
+                <i class="fa-solid fa-circle-right fa-xl"></i>
+            </a>
+        {{/if}}
+    </div>
+</div>
+
+{{!-- <script src="/socket.io/socket.io.js"></script> --}}
+<script src="/js/products.js"></script>
+<script src="https://kit.fontawesome.com/e9d32d96ee.js" crossorigin="anonymous"></script>
+
+
+

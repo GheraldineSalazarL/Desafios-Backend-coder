@@ -12,21 +12,22 @@ export default class Carts {
     }
 
     save = async(cart) => {
-        const carts = await this.getAll();
+        // const carts = await this.getAll();
 
-        if(carts.length === 0){
-            cart.id = 1;
-        } else{
-            cart.id =  carts[carts.length -1].id + 1;
-        }
+        // if(carts.length === 0){
+        //     cart.id = 1;
+        // } else{
+        //     cart.id =  carts[carts.length -1].id + 1;
+        // }
 
-        const result = await cartsModel.create(cart);
+        const result = await cartsModel.create({});
         return result;
     }
 
     getById = async (cid) => {
-        const cart = await cartsModel.findOne({id:cid});
-        return cart;
+        const cart = await cartsModel.findOne({_id:cid}).populate("products.product");
+        // console.log(cart);
+        if(cart === null) {return cart} else {return cart.toObject()};
     }
 
     saveId = async (cid, pid) => {
@@ -35,13 +36,13 @@ export default class Carts {
         if (!cart) return;
 
         const productos = cart.products;
-        const indexProd = productos.findIndex(prod => prod.product === pid);
+        const indexProd = productos.findIndex(prod => prod.product._id == pid);
 
         if(indexProd > -1){
-            const result = await cartsModel.updateOne({id: {$eq: cid}, "products.product" : pid}, {$inc:{"products.$.quantity" : 1}});
+            const result = await cartsModel.updateOne({_id: {$eq: cid}, "products.product" : pid}, {$inc:{"products.$.quantity" : 1}});
             return result;
         } else{ 
-            const result = await cartsModel.updateOne({id: {$eq: cid}}, {$push:{products:{product:pid, quantity:1}}});
+            const result = await cartsModel.updateOne({_id: {$eq: cid}}, {$push:{products:{product:pid, quantity:1}}});
             return result;
         }
     }  
@@ -52,10 +53,10 @@ export default class Carts {
         if (!cart) return;
 
         const products = cart.products;
-        const indexProd = products.findIndex(prod => prod.product === pid);
+        const indexProd = products.findIndex(prod => prod.product._id == pid);
 
         if(indexProd > -1){
-            const result = await cartsModel.updateOne({ id: cid }, { $pull: { products: { product: pid }}});
+            const result = await cartsModel.updateOne({ _id: cid }, { $pull: { products: { product: pid }}});
             return result;
         } else{ 
             const result = "error";
@@ -68,7 +69,7 @@ export default class Carts {
 
         if (!cart) return;
 
-        const result = await cartsModel.updateOne({ id: cid }, { products: productsUpdate});
+        const result = await cartsModel.updateOne({ _id: cid }, { products: productsUpdate});
         return result;
     }
 
@@ -78,10 +79,10 @@ export default class Carts {
         if (!cart) return;
 
         const productos = cart.products;
-        const indexProd = productos.findIndex(prod => prod.product === pid);
+        const indexProd = productos.findIndex(prod => prod.product._id == pid);
 
         if(indexProd > -1){
-            const result = await cartsModel.updateOne({id: {$eq: cid}, "products.product" : pid}, {$inc:{"products.$.quantity" : quantityUpdate.quantity}});
+            const result = await cartsModel.updateOne({_id: {$eq: cid}, "products.product" : pid}, {$inc:{"products.$.quantity" : quantityUpdate.quantity}});
             return result;
         } else{ 
             const result = "error";
@@ -94,7 +95,7 @@ export default class Carts {
 
         if (!cart) return;
 
-        const result = await cartsModel.updateOne({ id: cid }, { products: []});
+        const result = await cartsModel.updateOne({ _id: cid }, { products: []});
         return result;
     }
 }

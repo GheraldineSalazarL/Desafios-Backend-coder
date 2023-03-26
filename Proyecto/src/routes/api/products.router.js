@@ -10,7 +10,7 @@ const productsManager = new Products();
 // const manager = new Manager(`${__dirname}/files/productos.json`);
 
 router.get('/', async (req, res) => {  
-    const { limit = 2, page = 1, sort, category, stock} = req.query;
+    const { limit = 10, page = 1, sort, category, stock} = req.query;
 
     let query = {};
     if(category) query = {category : `${category}`};
@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:pid', async(req,res)=> {
-    const pid = Number(req.params.pid);
+    const pid = req.params.pid;
 
     // const product = await manager.getById(pid);
     const product = await productsManager.getById(pid);
@@ -80,18 +80,18 @@ router.post('/', async (req, res) => {
         res.status(500).send({error});
     }
 
-    const product = req.body;
-    if(!product.status) {product.status = true};
-    if(!product.thumbnails) {product.thumbnails = []}
+    // const product = req.body;
+    // if(!product.status) {product.status = true};
+    // if(!product.thumbnails) {product.thumbnails = []}
 
     // await manager.save(product);
 });
 
 router.put('/:pid', async (req,res)=> {
     const productReq = req.body;
-    const pid = Number(req.params.pid);
+    const pid = req.params.pid;
 
-    if(productReq.id) {return res.send({status: 'error', message:'el id no se puede modificar'})};
+    // if(productReq.id) {return res.send({status: 'error', message:'el id no se puede modificar'})};
 
     try{
         const product = await productsManager.update(productReq, pid);
@@ -105,14 +105,14 @@ router.put('/:pid', async (req,res)=> {
 });
 
 router.delete('/:pid', async (req,res)=> {
-    const pid = Number(req.params.pid);
+    const pid = req.params.pid;
 
     try{
         const removedProduct = await productsManager.deleteById(pid)
 
         removedProduct ?  res.send({status: 'sucess', message:'Producto eliminado'}) : res.send({status: 'error', message: 'Producto no encontrado'})
     }catch(error){
-        res.status(500).send({status: 'error', message:'errorifico'});
+        res.status(500).send({status: 'error'});
     }
 
     // const removedProduct = await manager.deleteById(pid)

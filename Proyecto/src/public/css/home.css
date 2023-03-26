@@ -1,8 +1,15 @@
 .container{
     margin: 50px;
 }
+.top{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 30px;
+}
 h1{
     text-align: center;
+    margin: auto;
 }
 .products-container{
     display: flex;
@@ -33,4 +40,13 @@ img{
 }
 p{
     margin: 0px;
+}
+.controllers{
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+}
+a{
+    margin: 0px 10px 0px 10px ;
+    color: #606999;
 }
