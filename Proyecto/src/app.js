@@ -9,6 +9,9 @@ import viewsRouter from './routes/web/views.router.js';
 // import Manager from './dao/fileManagers/Manager.js';
 import Products from './dao/dbManagers/products.js';
 import Chat from './dao/dbManagers/messages.js'
+import session from 'express-session';
+import sessionsRouter from './routes/api/sessions.router.js';
+import MongoStore from 'connect-mongo';
 
 const app = express ();
 
@@ -21,9 +24,21 @@ app.set('view engine', 'handlebars');
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: 'mongodb+srv://gheeraldin:0TY8Sm5YXeGmNvoD@cluster0.jckhxnb.mongodb.net/?retryWrites=true&w=majority',
+        mongoOptions: { useNewUrlParser: true },
+        ttl: 3600
+    }),
+    secret: 'secretCoder',
+    resave: true,
+    saveUninitialized: true
+}));
+
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/', viewsRouter);
+app.use('/api/sessions', sessionsRouter);
 
 const server = app.listen(8080, () => console.log('Listening'));
 const io = new Server(server);
@@ -77,6 +92,7 @@ try{
 } catch(error){
     console.log(`Cannot connect to database: ${error}`)
 };
+
 
 
 

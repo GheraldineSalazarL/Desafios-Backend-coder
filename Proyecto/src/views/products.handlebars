@@ -1,10 +1,29 @@
 <div class="container">
     <div class="top">
         <h1>Nuestros Productos</h1>
+        {{#if user}}
+            <a href="/api/sessions/logout">
+                <button class="btn">Logout</button>
+            </a>
+            <a class="cart" href="/profile">
+                <i class="fa-solid fa-user fa-2xl"></i>
+            </a>
+        {{else}}
+            <a href="/login">
+                <button class="btn">Login</button>
+            </a>
+        {{/if}}
         <a class="cart" href="/cart">
             <i class="fa-solid fa-cart-shopping fa-2xl"></i>
         </a>
     </div>
+    {{#if user}}
+        <div class="user">
+            <p>Bienvenido {{user.name}}</p>
+            <p>Email: {{user.email}}</p>
+            <p>Rol: {{user.rol}}</p>
+        </div>
+    {{/if}}
     <div class="products-container">
         {{#each products}}
         <div class="product-container">
