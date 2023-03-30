@@ -12,10 +12,10 @@ import Chat from './dao/dbManagers/messages.js'
 import session from 'express-session';
 import sessionsRouter from './routes/api/sessions.router.js';
 import MongoStore from 'connect-mongo';
+import initializePassport from './config/passport.config.js';
+import passport from 'passport';
 
 const app = express ();
-
-app.use(express.static(`${__dirname}/public`));
 
 app.engine('handlebars', handlebars.engine());
 app.set('views', `${__dirname}/views`);
@@ -23,6 +23,7 @@ app.set('view engine', 'handlebars');
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+app.use(express.static(`${__dirname}/public`));
 
 app.use(session({
     store: MongoStore.create({
@@ -34,6 +35,11 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }));
+
+//Configuracion de passport
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
