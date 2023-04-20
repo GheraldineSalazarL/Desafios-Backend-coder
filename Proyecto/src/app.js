@@ -1,7 +1,7 @@
 import express from "express";
 import handlebars from 'express-handlebars';
 import mongoose from 'mongoose';
-import __dirname from './utils.js';
+import {__dirname} from './utils.js';
 import { Server } from 'socket.io';
 import productsRouter from './routes/api/products.router.js';
 import cartsRouter from './routes/api/carts.router.js';
@@ -14,7 +14,9 @@ import sessionsRouter from './routes/api/sessions.router.js';
 import MongoStore from 'connect-mongo';
 import initializePassport from './config/passport.config.js';
 import passport from 'passport';
+import UsersRouter from "./routes/api/users.router.js";
 
+const usersRouter = new UsersRouter();
 const app = express ();
 
 app.engine('handlebars', handlebars.engine());
@@ -39,14 +41,16 @@ app.use(session({
 //Configuracion de passport
 initializePassport();
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
-app.use('/api/products', productsRouter);
-app.use('/api/carts', cartsRouter);
-app.use('/', viewsRouter);
-app.use('/api/sessions', sessionsRouter);
+// app.use('/api/products', productsRouter);
+// app.use('/api/carts', cartsRouter);
+// app.use('/', viewsRouter);
+// app.use('/api/sessions', sessionsRouter);
+app.use('/api/users', usersRouter.getRouter());
 
 const server = app.listen(8080, () => console.log('Listening'));
+
 const io = new Server(server);
 
 // const manager = new Manager(`${__dirname}/files/productos.json`);
