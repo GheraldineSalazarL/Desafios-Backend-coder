@@ -116,5 +116,28 @@ router.delete("/:cid", async (req, res) => {
     }
 });
 
+router.post('/cart/add/:id', async (req, res) => {
+    const pid = req.params.id;
+
+    try {
+        let cart;
+        if (!req.session.user.cart) {
+            cart = await cartsManager.save();
+            req.session.user.cart = cart._id;
+        } else {
+            cart = await cartsManager.getById(req.session.user.cart);
+        }
+
+        const cid = cart._id;
+        await cartsManager.saveId(cid, pid);
+        req.session.user.cart = cart._id;
+
+        res.redirect('/products');
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+
 
 export default router;

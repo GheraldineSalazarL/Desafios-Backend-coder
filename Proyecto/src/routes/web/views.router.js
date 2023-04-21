@@ -36,7 +36,7 @@ router.get('/chat', privateAccess, (req, res) => {
     res.render('chat', {style: 'chat.css'})
 });
 
-let cartId;
+// let cartId;
 router.get('/products', privateAccess, async (req, res) => {
     const { limit = 10, page = 1, sort, category, stock} = req.query;
 
@@ -47,53 +47,43 @@ router.get('/products', privateAccess, async (req, res) => {
 
     const result = await productsManager.getAllPage(limit, page, sort, query)
 
+    // const cartId = req.session.user.cart;
     const products = result.docs; 
     const hasPrevPage = result.hasPrevPage;
     const prevPage = result.prevPage;
     const hasNextPage = result.hasNextPage;
     const nextPage = result.nextPage;
     const Page = result.page;
-    res.render('products', {products, hasPrevPage, prevPage, hasNextPage,  nextPage, Page, cartId, user: req.session.user, style: 'home.css'})
+    res.render('products', {products, hasPrevPage, prevPage, hasNextPage,  nextPage, Page, user: req.session.user, style: 'home.css'})
 });
 
-router.post('/cart/add/:id', async (req, res) => {
-    const pid = req.params.id;
+// router.post('/cart/add/:id', async (req, res) => {
+//     const pid = req.params.id;
 
-    try {
-        let cart;
-        if (!cartId) {
-            cart = await cartsManager.save();
-            cartId = cart._id;
-        } else {
-            cart = await cartsManager.getById(cartId);
-        }
+//     try {
+//         let cart;
+//         if (!req.session.user.cart) {
+//             cart = await cartsManager.save();
+//             req.session.user.cart = cart._id;
+//         } else {
+//             cart = await cartsManager.getById(req.session.user.cart);
+//         }
 
-        const cid = cart._id;
-        await cartsManager.saveId(cid, pid);
+//         const cid = cart._id;
+//         await cartsManager.saveId(cid, pid);
 
-        res.redirect('/products');
-    } catch (err) {
-        console.log(err);
-    }
-  });
+//         res.redirect('/products');
+//     } catch (err) {
+//         console.log(err);
+//     }
+//   });
 
 router.get('/cart', privateAccess, async (req, res) => {
-    try {
-        const cart = await cartsManager.getById(cartId);
-        res.render('cart', { cart, style: 'cart.css' });
-    } catch (err) {
-        console.log(err);
-    }
-});
+    let cid = req.session.user.cart;
 
-router.get('/cart/:cid', privateAccess, async (req, res) => {
-    const cid = req.params.cid;
-    try {
-        const cart = await cartsManager.getById(cid);
-        res.render('cart', { cart, style: 'cart.css' });
-    } catch (err) {
-        console.log(err);
-    }
+    const cart = await cartsManager.getById(cid);
+
+    res.render('cart', {cart, style: 'cart.css'})
 });
 
 

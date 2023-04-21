@@ -15,17 +15,17 @@ router.post('/login', passport.authenticate('login', { failureRedirect: 'fail-lo
     if (!req.user) return res.status(400)
         .send({ status: 'error', message: 'Invalid credentials' });
 
-    // let rol;
-    // if(req.user.email.slice(0,5) === 'admin' && req.user.password === 'adminCod3r123') rol = 'admin';
-    // else rol = 'usuario';
+    let rol;
+    if(req.user.email.slice(0,5) === 'admin') rol = 'admin';
+    else rol = 'usuario';
 
-    // delete req.user.password; 
+    delete req.user.password; 
 
     req.session.user = {
         name: `${req.user.first_name} ${req.user.last_name}`,
         age: req.user.age,
         email: req.user.email,
-        // rol: rol
+        rol: rol
     }
 
     res.send({ status: 'success', message: 'login success' });
