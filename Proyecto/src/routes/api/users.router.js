@@ -7,119 +7,63 @@ const usersManager = new UsersManager();
 
 export default class UsersRouter extends Router {
     init() {
-        this.post('/login', ["PUBLIC"], async (req, res) => {
-            const { email, password } = req.body;
-            const user = await usersManager.getByEmail(email);
-        
-            if (!user) return res.sendClientError('incorrect credentials');
-        
-            const comparePassword = await compareHashedData(
-                password,
-                user.password
-            );
-        
-            if (!comparePassword) {
-                return res.sendClientError('incorrect credentials');
-            }
-        
-            const accessToken = generateToken(user);
-        
-            res.sendSuccess({ accessToken });
-        });
-
-        // this.get('/test', ["PUBLIC"], (req,res) => {
-        //     console.log('test');
-        //     res.send({message: 'test'});
-        // });
-        
-        this.post('/register', ["PUBLIC"], async (req, res) => {
-            try {
-                const { first_name, last_name, email, age, password, rol } = req.body;
-                
-                if (!first_name || !last_name || !email || !age || !password || !rol ) {
-                    return res.sendClientError('incomplete values');
-                }
-        
-                const userDB = await usersManager.getByEmail(email);
-        
-                if (userDB) {
-                    return res.sendClientError('user already exists');
-                } else {
-                    const hashPassword = await hashData(password);
-                    
-                    const newUser = {
-                        ...req.body,
-                    };
-                    
-                    newUser.password = hashPassword;
-        
-                    const newUserDB = await usersManager.saveUser(newUser);
-                    res.sendSuccess(newUserDB);
-                }
-            } catch (error) {
-                console.log(error);
-                res.sendServerError(error);
-            }
-        });
+        // this.post('/register', ['PUBLIC'], this.register);
+        // this.post('/login', ['PUBLIC'], this.login);
+        this.get('/currentUser', ['USER', 'USER_PREMIUM'], this.current);
     }
-}
 
-// const usersManager = new UsersManager();
+    async current(req, res) {
+        res.sendSuccess(req.user); 
+    }
 
-// export default class UsersRouter extends Router {
-//     init() {
-//         this.post('/register', ['PUBLIC'], this.register);
-//         this.post('/login', ['PUBLIC'], this.login);
-//     }
+    // async register(req, res){
+    //     try{
+    //         const { first_name, last_name, email, age, password, rol } = req.body;
 
-//     async register(req, res){
-//         try{
-//             const { first_name, last_name, email, age, password, rol } = req.body;
+    //         if(!first_name || !last_name || !email || !age || !password || !rol ){
+    //             return res.sendClientError('incomplete values');
+    //         }
 
-//             if(!first_name || !last_name || !email || !age || !password || !rol ){
-//                 return res.sendClientError('incomplete values');
-//             }
+    //         const userDB = await usersManager.getByEmail(email);
 
-//             const userDB = await usersManager.getByEmail(email);
+    //         if(userDB){ 
+    //             return res.sendClientError('User already exists'); 
+    //         } else{ 
+    //             const hashPassword = await hashData(password); //hasehamos la contraseña 
 
-//             if(userDB){ 
-//                 return res.sendClientError('User already exists'); 
-//             } else{ 
-//                 const hashPassword = await hashData(password); //hasehamos la contraseña 
+    //             const user = {
+    //                 ...req.body
+    //             } 
 
-//                 const user = {
-//                     ...req.body
-//                 } 
+    //             user.password = hashPassword;
 
-//                 user.password = hashPassword;
+    //             const newUserDB = await usersManager.save(user); 
 
-//                 const newUserDB = await usersManager.save(user); 
+    //             res.sendSuccess(newUserDB); 
+    //         };
+    //     } catch(error){
+    //         console.log(error);
+    //         res.sendServerError(error);
+    //     }
+    // }
 
-//                 res.sendSuccess(newUserDB); 
-//             };
-//         } catch(error){
-//             console.log(error);
-//             res.sendServerError(error);
-//         }
-//     }
+    // async login(req, res){
+    //     try{
+    //         const { email, password } = req.body;
 
-//     async login(req, res){
-//         try{
-//             const { email, password } = req.body;
-
-//             const user= await usersManager.getByEmail(email);
-//             if(!user) return res.sendClientError('Incorrect credentials'); 
+    //         const user= await usersManager.getByEmail(email);
+    //         if(!user) return res.sendClientError('Incorrect credentials'); 
             
-//             const comparePassword = await compareHashedData(password, user.password);
-//             if(!comparePassword) return res.sendClientError('Incorrect credentials'); 
+    //         const comparePassword = await compareHashedData(password, user.password);
+    //         if(!comparePassword) return res.sendClientError('Incorrect credentials'); 
 
-//             const accessToken = generateToken(user);
+    //         const accessToken = generateToken(user);
 
-//             res.sendSuccess({accessToken}); 
+    //         res.sendSuccess({accessToken}); 
 
-//         } catch(error){
-//             console.log(error);
-//             res.sendServerError(error);
-//         }
-//     }
-// }
+    //     } catch(error){
+    //         console.log(error);
+    //         res.sendServerError(error);
+    //     }
+    // }
+}

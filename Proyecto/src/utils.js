@@ -16,11 +16,11 @@ const hashData = async (password) => {
 }
 
 const compareHashedData = async (password, passwordDB) => {
-    return bcrypt.compare(password.passwordDB);
+    return bcrypt.compare(password, passwordDB);
 }
 
-const generateToken = (user) => {
-    const token = jwt.sign({ user }, 'PRIVATE_KEY', { expiresIn: '24h' });
+const generateToken = (usuario) => {
+    return jwt.sign(usuario, 'secretCoder'); 
 }
 
 export {

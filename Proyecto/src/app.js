@@ -15,8 +15,10 @@ import MongoStore from 'connect-mongo';
 import initializePassport from './config/passport.config.js';
 import passport from 'passport';
 import UsersRouter from "./routes/api/users.router.js";
+import SessionRouter from "./routes/api/sessions.router.js";
 
 const usersRouter = new UsersRouter();
+const sessionRouter = new SessionRouter();
 const app = express ();
 
 app.engine('handlebars', handlebars.engine());
@@ -45,8 +47,9 @@ app.use(passport.initialize());
 
 // app.use('/api/products', productsRouter);
 // app.use('/api/carts', cartsRouter);
-// app.use('/', viewsRouter);
+// app.use('/', viewsRouter); sessionRouter
 // app.use('/api/sessions', sessionsRouter);
+app.use('/api/sessions', sessionRouter.getRouter());
 app.use('/api/users', usersRouter.getRouter());
 
 const server = app.listen(8080, () => console.log('Listening'));
