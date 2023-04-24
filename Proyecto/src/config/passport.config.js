@@ -1,20 +1,35 @@
 import passport from 'passport';
 import local from 'passport-local';
-import userModel from '../dao/models/users.js';
+// import {userModel} from '../dao/models/users.js';
 import { createHash, isValidPassword } from '../utils.js';
 import GitHubStrategy from 'passport-github2';
+import jwt from 'passport-jwt';
+// import { PRIVATE_KEY } from '../utils.js';
+import User from '../dao/dbManagers/users.js'
+import config from '../config/config.js'; 
+
+const PRIVATE_KEY = config.secret;
+const CLIENTID = config.clientId;
+const CLIENTSECRET = config.clientSecret;
 
 const LocalStrategy = local.Strategy;
 
+const JWTStrategy = jwt.Strategy;
+const ExtractJWT = jwt.ExtractJwt;
+
+const usersManager = new User();
+
 const initializePassport = () => {
+
+    //Estrategia de autentificación (LocalStrategy)
     passport.use('register', new LocalStrategy({
         passReqToCallback: true,
         usernameField: 'email'
     }, async (req, username, password, done) => {
-        const { first_name, last_name, email, age } = req.body;
+        const { first_name, last_name, email, age, rol } = req.body;
 
         try {
-            const user = await userModel.findOne({ email: username });
+            const user = await usersManager.getByEmail(username); //username=email
 
             if (user) {
                 console.log('user already exists');
@@ -26,10 +41,11 @@ const initializePassport = () => {
                 last_name,
                 email,
                 age,
+                rol,
                 password: createHash(password)
             }
 
-            const result = await userModel.create(newUser);
+            const result = await usersManager.saveUser(newUser);
             return done(null, result);
 
         } catch (error) {
@@ -41,7 +57,7 @@ const initializePassport = () => {
         usernameField: 'email'
     }, async (username, password, done) => {
         try {
-            const user = await userModel.findOne({ email: username });
+            const user = await usersManager.getByEmail(username);
 
             if (!user) {
                 return done(null, false)
@@ -56,22 +72,23 @@ const initializePassport = () => {
     }));
 
     passport.use('github', new GitHubStrategy({
-        clientID:'Iv1.7a3f5cac86242718',
-        clientSecret: '11906866cbd9e6f06c1052d39ce7a581187330e7',
-        callbackURL: 'http://localhost:8080/api/sessions/github-callback'
+        clientID: CLIENTID,
+        clientSecret: CLIENTSECRET,
+        callbackURL: 'http://localhost:8080/api/sessionsView/github-callback'
     }, async(accessToken, refreshToken, profile, done) => {
         try{
-            const user = await userModel.findOne({ email: profile._json.email }); 
+            const user = await usersManager.getByEmail(profile._json.email); //email: profile._json.email
             if(!user){
                 const newUser = {
                     first_name: profile._json.name,
                     last_name: '', 
                     age: 0,
                     email: profile._json.email,
+                    rol: '',
                     password: ''
                 };
 
-                const result = await userModel.create(newUser);
+                const result = await usersManager.saveUser(newUser);
                 done(null, result);
             } else {
                 done(null, user);
@@ -86,9 +103,23 @@ const initializePassport = () => {
     });
 
     passport.deserializeUser(async (id, done) => {
-        const user = await userModel.findById(id);
+        const user = await usersManager.getById(id);
         done(null, user);
     });
+
+    //-------------------------------------------JWT--------------------------------------------
+
+    passport.use('jwt', new JWTStrategy({
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+        secretOrKey: PRIVATE_KEY//secretOrKey: PRIVATE_KEY
+    }, async(jwt_payload, done) => {
+        try {
+            console.log(jwt_payload);
+            return done(null, jwt_payload.user);
+        } catch (error) {
+            return done(error);
+        }
+    }));
 
 };
 
