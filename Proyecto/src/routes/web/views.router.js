@@ -1,10 +1,19 @@
 import { Router } from 'express';
-// import Manager from '../../dao/fileManagers/Manager.js';
+import Manager from '../../dao/fileManagers/Manager.js';
 import { __dirname } from '../../utils.js';
 import Products from '../../dao/dbManagers/products.js'
 import Carts from '../../dao/dbManagers/carts.js';
-
+// import { chat, getAllProducts, getCart, getProductsPaginate, login, profile, register, saveDeleteProductsSocket } from '../../controllers/web/views.controller.js';
 const router = Router();
+
+// router.get('/', privateAccess, getAllProducts); 
+// router.get('/realtimeproducts', privateAccess, saveDeleteProductsSocket); 
+// router.get('/chat', privateAccess, chat); 
+// router.get('/products', privateAccess, getProductsPaginate); 
+// router.get('/cart', privateAccess, getCart); 
+// router.get('/register', publicAccess, register); 
+// router.get('/login', publicAccess, login); 
+// router.get('/profile', privateAccess, profile); 
 
 const productsManager = new Products();
 const cartsManager = new Carts();
@@ -19,7 +28,6 @@ const privateAccess = (req, res, next) => {
     if (!req.session.user) return res.redirect('/login'); 
     next();
 }
-
 
 router.get('/', privateAccess, async (req, res) => {
     // const products = await manager.getAll();
@@ -36,7 +44,7 @@ router.get('/chat', privateAccess, (req, res) => {
     res.render('chat', {style: 'chat.css'})
 });
 
-let cartId;
+// let cartId;
 router.get('/products', privateAccess, async (req, res) => {
     const { limit = 10, page = 1, sort, category, stock} = req.query;
 
@@ -47,55 +55,23 @@ router.get('/products', privateAccess, async (req, res) => {
 
     const result = await productsManager.getAllPage(limit, page, sort, query)
 
+    // const cartId = req.session.user.cart;
     const products = result.docs; 
     const hasPrevPage = result.hasPrevPage;
     const prevPage = result.prevPage;
     const hasNextPage = result.hasNextPage;
     const nextPage = result.nextPage;
     const Page = result.page;
-    res.render('products', {products, hasPrevPage, prevPage, hasNextPage,  nextPage, Page, cartId, user: req.session.user, style: 'home.css'})
+    res.render('products', {products, hasPrevPage, prevPage, hasNextPage,  nextPage, Page, user: req.session.user, style: 'home.css'})
 });
-
-router.post('/cart/add/:id', async (req, res) => {
-    const pid = req.params.id;
-
-    try {
-        let cart;
-        if (!cartId) {
-            cart = await cartsManager.save();
-            cartId = cart._id;
-        } else {
-            cart = await cartsManager.getById(cartId);
-        }
-
-        const cid = cart._id;
-        await cartsManager.saveId(cid, pid);
-
-        res.redirect('/products');
-    } catch (err) {
-        console.log(err);
-    }
-  });
 
 router.get('/cart', privateAccess, async (req, res) => {
-    try {
-        const cart = await cartsManager.getById(cartId);
-        res.render('cart', { cart, style: 'cart.css' });
-    } catch (err) {
-        console.log(err);
-    }
-});
+    let cid = req.session.user.cart;
 
-router.get('/cart/:cid', privateAccess, async (req, res) => {
-    const cid = req.params.cid;
-    try {
-        const cart = await cartsManager.getById(cid);
-        res.render('cart', { cart, style: 'cart.css' });
-    } catch (err) {
-        console.log(err);
-    }
-});
+    const cart = await cartsManager.getById(cid);
 
+    res.render('cart', {cart, style: 'cart.css'})
+});
 
 router.get('/register', publicAccess, (req, res) => {
     res.render('register', { style: 'register.css' });

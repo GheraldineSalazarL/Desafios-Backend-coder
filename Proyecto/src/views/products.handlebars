@@ -2,7 +2,7 @@
     <div class="top">
         <h1>Nuestros Productos</h1>
         {{#if user}}
-            <a href="/api/sessions/logout">
+            <a href="/api/sessionsView/logout">
                 <button class="btn">Logout</button>
             </a>
             <a class="cart" href="/profile">
@@ -37,9 +37,10 @@
                     <p>Stock: {{this.stock}}</p>
                     <p>Categoría: {{this.category}}</p>
                     <p>Id: {{this._id}}</p>
-                    <form action="/cart/add/{{this._id}}" method="post">
+                    {{!-- <form action="/cart/add/{{this._id}}" method="post">
                         <button type="submit">Agregar al carrito</button>
-                    </form>
+                    </form> --}}
+                    <button onclick="addCart('{{this._id}}')">Agregar al carrito</button>
                 </div>
             </div>
         </div>

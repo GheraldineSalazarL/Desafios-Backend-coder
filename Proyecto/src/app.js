@@ -10,7 +10,7 @@ import viewsRouter from './routes/web/views.router.js';
 import Products from './dao/dbManagers/products.js';
 import Chat from './dao/dbManagers/messages.js'
 import session from 'express-session';
-import sessionsRouter from './routes/api/sessions.router.js';
+import sessionsViewRouter from './routes/api/sessionsView.router.js';
 import MongoStore from 'connect-mongo';
 import initializePassport from './config/passport.config.js';
 import passport from 'passport';
@@ -43,12 +43,12 @@ app.use(session({
 //Configuracion de passport
 initializePassport();
 app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.session());
 
-// app.use('/api/products', productsRouter);
-// app.use('/api/carts', cartsRouter);
-// app.use('/', viewsRouter); sessionRouter
-// app.use('/api/sessions', sessionsRouter);
+app.use('/api/products', productsRouter);
+app.use('/api/carts', cartsRouter);
+app.use('/', viewsRouter); sessionRouter
+app.use('/api/sessionsView', sessionsViewRouter);
 app.use('/api/sessions', sessionRouter.getRouter());
 app.use('/api/users', usersRouter.getRouter());
 
