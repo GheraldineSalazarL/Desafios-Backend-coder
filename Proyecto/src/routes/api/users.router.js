@@ -1,15 +1,15 @@
 // import { createHash, isValidPassword } from '../utils.js';
+import { current } from '../../controllers/api/users.controller.js';
 import Router from './router.js';
-import { compareHashedData, generateToken, hashData } from '../../utils.js';
-import UsersManager from '../../dao/dbManagers/users.js';
+// import UsersManager from '../../dao/dbManagers/users.js';
 
-const usersManager = new UsersManager();
+// const usersManager = new UsersManager();
 
 export default class UsersRouter extends Router {
     init() {
         // this.post('/register', ['PUBLIC'], this.register);
         // this.post('/login', ['PUBLIC'], this.login);
-        this.get('/currentUser', ['USER', 'USER_PREMIUM'], this.current);
+        this.get('/currentUser', ['USER', 'USER_PREMIUM'], current);
     }
 
     async current(req, res) {

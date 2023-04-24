@@ -2,7 +2,9 @@
 import { Router as expressRouter } from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
+import config from '../../config/config.js';
 
+const PRIVATE_KEY = config.secret;
 export default class Router {
     constructor() {
         this.router = expressRouter();
@@ -85,7 +87,7 @@ export default class Router {
         
         const token = authToken.split(" ")[1]; 
         
-        const user = jwt.verify(token, 'secretCoder'); 
+        const user = jwt.verify(token, PRIVATE_KEY); 
         if(!policies.includes(user.rol.toUpperCase()))
             return res.status(403).json({ message: 'Forbidden'})
         

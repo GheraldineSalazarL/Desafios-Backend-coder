@@ -1,70 +1,70 @@
 // import { Router } from 'express';
+import { login, register } from '../../controllers/api/sessions.controller.js';
 import Router from './router.js';
 // import passport from 'passport';
-import { compareHashedData, generateToken, hashData } from '../../utils.js';
-import jwt from 'jsonwebtoken';
-import UsersManager from '../../dao/dbManagers/users.js';
+// import { compareHashedData, generateToken, hashData } from '../../utils.js';
+// import UsersManager from '../../dao/dbManagers/users.js';
 
-const usersManager = new UsersManager();
+// const usersManager = new UsersManager();
 export default class SessionRouter extends Router{
     init(){
-        this.post('/register', ['PUBLIC'], this.register);
-        this.post('/login', ['PUBLIC'], this.login);
+        this.post('/register', ['PUBLIC'], register);
+        this.post('/login', ['PUBLIC'], login);
     }
 
-    async register(req, res){
-        try{
-            const { first_name, last_name, email, age, password, rol } = req.body;
+    // async register(req, res){
+    //     try{
+    //         const { first_name, last_name, email, age, password, rol } = req.body;
     
-            if(!first_name || !last_name || !email || !age || !password || !rol ){
-                return res.sendClientError('incomplete values');
-            }
+    //         if(!first_name || !last_name || !email || !age || !password || !rol ){
+    //             return res.sendClientError('incomplete values');
+    //         }
     
-            const userDB = await usersManager.getByEmail(email);
+    //         const userDB = await usersManager.getByEmail(email);
     
-            if(userDB){ 
-                return res.sendClientError('User already exists'); 
-            } else{ 
-                const hashPassword = await hashData(password); //hasehamos la contraseña 
+    //         if(userDB){ 
+    //             return res.sendClientError('User already exists'); 
+    //         } else{ 
+    //             const hashPassword = await hashData(password); //hasehamos la contraseña 
     
-                const user = {
-                    ...req.body
-                } 
+    //             const user = {
+    //                 ...req.body
+    //             } 
     
-                user.password = hashPassword;
+    //             user.password = hashPassword;
     
-                const newUserDB = await usersManager.saveUser(user); 
+    //             const newUserDB = await usersManager.saveUser(user); 
     
-                res.sendSuccess(newUserDB); 
-            };
-        } catch(error){
-            console.log(error);
-            res.sendServerError(error);
-        }
-    }
+    //             res.sendSuccess(newUserDB); 
+    //         };
+    //     } catch(error){
+    //         console.log(error);
+    //         res.sendServerError(error);
+    //     }
+    // }
     
-    async login(req, res){
-        try{
-            const { email, password } = req.body;
+    // async login(req, res){
+    //     try{
+    //         const { email, password } = req.body;
     
-            const user= await usersManager.getByEmail(email);
-            if(!user) return res.sendClientError('Incorrect credentials'); 
+    //         const user= await usersManager.getByEmail(email);
+    //         if(!user) return res.sendClientError('Incorrect credentials'); 
             
-            const comparePassword = await compareHashedData(password, user.password);
-            if(!comparePassword) return res.sendClientError('Incorrect credentials'); 
+    //         const comparePassword = await compareHashedData(password, user.password);
+    //         if(!comparePassword) return res.sendClientError('Incorrect credentials'); 
             
-            const usuario={
-                user : user.email, 
-                rol: user.rol
-            }
-            const accessToken = generateToken(usuario);
-            res.sendSuccess({accessToken}); 
+    //         const usuario={
+    //             user : user.email, 
+    //             rol: user.rol
+    //         }
+    //         const accessToken = generateToken(usuario);
+    //         res.sendSuccess({accessToken}); 
     
-        } catch(error){
-            console.log(error);
-            res.sendServerError(error);
-        }
-    }
+    //     } catch(error){
+    //         console.log(error);
+    //         res.sendServerError(error);
+    //     }
+    // }
 
 }
 

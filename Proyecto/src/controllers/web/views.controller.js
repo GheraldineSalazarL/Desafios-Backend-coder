@@ -4,6 +4,16 @@ import Carts from '../../dao/dbManagers/carts.js';
 const productsManager = new Products();
 const cartsManager = new Carts();
 
+const publicAccess = (req, res, next) => {
+    if (req.session.user) return res.redirect('/products'); 
+    next();
+}
+
+const privateAccess = (req, res, next) => {
+    if (!req.session.user) return res.redirect('/login'); 
+    next();
+}
+
 const getAllProducts = async (req, res) => {
     // const products = await manager.getAll();
 
@@ -62,6 +72,8 @@ const profile = (req, res) => {
 };
 
 export { 
+    publicAccess, 
+    privateAccess, 
     getAllProducts, 
     saveDeleteProductsSocket, 
     chat, 

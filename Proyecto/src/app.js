@@ -1,24 +1,32 @@
 import express from "express";
 import handlebars from 'express-handlebars';
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 import {__dirname} from './utils.js';
 import { Server } from 'socket.io';
+// import session from 'express-session';
+// import MongoStore from 'connect-mongo';
+import passport from 'passport';
+
+import initializePassport from './config/passport.config.js';
+
 import productsRouter from './routes/api/products.router.js';
 import cartsRouter from './routes/api/carts.router.js';
 import viewsRouter from './routes/web/views.router.js';
+import sessionsViewRouter from './routes/api/sessionsView.router.js';
 // import Manager from './dao/fileManagers/Manager.js';
+
 import Products from './dao/dbManagers/products.js';
 import Chat from './dao/dbManagers/messages.js'
-import session from 'express-session';
-import sessionsViewRouter from './routes/api/sessionsView.router.js';
-import MongoStore from 'connect-mongo';
-import initializePassport from './config/passport.config.js';
-import passport from 'passport';
+
 import UsersRouter from "./routes/api/users.router.js";
 import SessionRouter from "./routes/api/sessions.router.js";
 
+import './dao/dbConfig.js';
+import { sessionMiddleware } from "./dao/dbConfig.js";
+
 const usersRouter = new UsersRouter();
 const sessionRouter = new SessionRouter();
+
 const app = express ();
 
 app.engine('handlebars', handlebars.engine());
@@ -29,16 +37,17 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static(`${__dirname}/public`));
 
-app.use(session({
-    store: MongoStore.create({
-        mongoUrl: 'mongodb+srv://gheeraldin:0TY8Sm5YXeGmNvoD@cluster0.jckhxnb.mongodb.net/?retryWrites=true&w=majority',
-        mongoOptions: { useNewUrlParser: true },
-        ttl: 3600
-    }),
-    secret: 'secretCoder',
-    resave: true,
-    saveUninitialized: true
-}));
+// app.use(session({
+//     store: MongoStore.create({
+//         mongoUrl: 'mongodb+srv://gheeraldin:0TY8Sm5YXeGmNvoD@cluster0.jckhxnb.mongodb.net/?retryWrites=true&w=majority',
+//         mongoOptions: { useNewUrlParser: true },
+//         ttl: 3600
+//     }),
+//     secret: 'secretCoder',
+//     resave: true,
+//     saveUninitialized: true
+// }));
+app.use(sessionMiddleware);
 
 //Configuracion de passport
 initializePassport();
@@ -100,11 +109,11 @@ io.on('connection', async socket => {
     });
 });
 
-try{
-    await mongoose.connect('mongodb+srv://gheeraldin:0TY8Sm5YXeGmNvoD@cluster0.jckhxnb.mongodb.net/?retryWrites=true&w=majority') 
-} catch(error){
-    console.log(`Cannot connect to database: ${error}`)
-};
+// try{
+//     await mongoose.connect('mongodb+srv://gheeraldin:0TY8Sm5YXeGmNvoD@cluster0.jckhxnb.mongodb.net/?retryWrites=true&w=majority') 
+// } catch(error){
+//     console.log(`Cannot connect to database: ${error}`)
+// };
 
 
 
