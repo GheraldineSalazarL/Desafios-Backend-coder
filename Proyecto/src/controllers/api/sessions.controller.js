@@ -1,7 +1,4 @@
-import { compareHashedData, generateToken, hashData } from '../../utils.js';
-import UsersManager from '../../dao/dbManagers/users.js';
-
-const usersManager = new UsersManager();
+import * as sessionsService from '../../services/sessions.service.js';
 
 const register = async (req, res) => {
     try{
@@ -11,23 +8,15 @@ const register = async (req, res) => {
             return res.sendClientError('incomplete values');
         }
 
-        const userDB = await usersManager.getByEmail(email);
+        const user = { first_name, last_name, email, age, password, rol };
+        
+        const result = await sessionsService.register(res, user);
 
-        if(userDB){ 
-            return res.sendClientError('User already exists'); 
-        } else{ 
-            const hashPassword = await hashData(password); //hasehamos la contraseña 
-
-            const user = {
-                ...req.body
-            } 
-
-            user.password = hashPassword;
-
-            const newUserDB = await usersManager.saveUser(user); 
-
-            res.sendSuccess(newUserDB); 
-        };
+        if(result==='exist'){
+            return res.sendClientError('User already exists');
+        }
+        res.sendSuccess(newUserDB); 
+        
     } catch(error){
         console.log(error);
         res.sendServerError(error);
@@ -38,18 +27,14 @@ const login = async (req, res) => {
     try{
         const { email, password } = req.body;
 
-        const user= await usersManager.getByEmail(email);
-        if(!user) return res.sendClientError('Incorrect credentials'); 
+        const result= await sessionsService.login(email, password);
         
-        const comparePassword = await compareHashedData(password, user.password);
-        if(!comparePassword) return res.sendClientError('Incorrect credentials'); 
+        if(result === 'notCredentials') 
+            return res.sendClientError('Incorrect credentials'); 
         
-        const usuario={
-            user : user.email, 
-            rol: user.rol
-        }
-        const accessToken = generateToken(usuario);
-        res.sendSuccess({accessToken}); 
+        if(!result) return res.sendClientError('Incorrect credentials'); 
+        
+        res.sendSuccess({result}); 
 
     } catch(error){
         console.log(error);

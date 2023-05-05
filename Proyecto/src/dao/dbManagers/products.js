@@ -34,7 +34,7 @@ export default class Products {
     }
 
     save = async(product) => {
-        const products = await this.getAll();
+        // const products = await this.getAll();
 
         // if(products.length === 0){
         //     product.id = 1;

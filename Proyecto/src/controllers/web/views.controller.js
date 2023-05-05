@@ -1,8 +1,4 @@
-import Products from '../../dao/dbManagers/products.js'
-import Carts from '../../dao/dbManagers/carts.js';
-
-const productsManager = new Products();
-const cartsManager = new Carts();
+import * as viewsService from '../../services/views.service.js';
 
 const publicAccess = (req, res, next) => {
     if (req.session.user) return res.redirect('/products'); 
@@ -15,10 +11,12 @@ const privateAccess = (req, res, next) => {
 }
 
 const getAllProducts = async (req, res) => {
-    // const products = await manager.getAll();
-
-    const products = await productsManager.getAll(); 
-    res.render('home', {products, style: 'home.css'});
+    try {
+        const products = await viewsService.getAllProducts(); 
+        res.render('home', {products, style: 'home.css'});
+    } catch (error) {
+        res.status(500).send({error});
+    }
 };
 
 const saveDeleteProductsSocket = async (req, res) => {
@@ -30,31 +28,36 @@ const chat = (req, res) => {
 };
 
 const getProductsPaginate = async (req, res) => {
-    const { limit = 10, page = 1, sort, category, stock} = req.query;
+    try {
+        const { limit = 10, page = 1, sort, category, stock} = req.query;
 
-    let query = {};
-    if(category) query = {category : `${category}`};
-    if(stock) query = {stock : `${stock}`};
-    if(category && stock) query = {$and: [ {category : `${category}`},{stock : `${stock}`} ]}  
+        const result = await viewsService.getProductsPaginate(limit, page, sort, category, stock)
 
-    const result = await productsManager.getAllPage(limit, page, sort, query)
-
-    // const cartId = req.session.user.cart;
-    const products = result.docs; 
-    const hasPrevPage = result.hasPrevPage;
-    const prevPage = result.prevPage;
-    const hasNextPage = result.hasNextPage;
-    const nextPage = result.nextPage;
-    const Page = result.page;
-    res.render('products', {products, hasPrevPage, prevPage, hasNextPage,  nextPage, Page, user: req.session.user, style: 'home.css'})
+        res.render('products', {
+            products : result.docs, 
+            hasPrevPage : result.hasPrevPage,
+            prevPage : result.prevPage,
+            hasNextPage : result.hasNextPage,
+            nextPage : result.nextPage,
+            Page : result.page,
+            user: req.session.user, 
+            style: 'home.css'
+        });
+    } catch (error) {
+        res.status(500).send({error});
+    }
 };
 
 const getCart = async (req, res) => {
-    let cid = req.session.user.cart;
+    try {
+        let cid = req.session.user.cart;
 
-    const cart = await cartsManager.getById(cid);
+        const cart = await viewsService.getCart(cid);
 
-    res.render('cart', {cart, style: 'cart.css'})
+        res.render('cart', {cart, style: 'cart.css'})
+    } catch (error) {
+        res.status(500).send({error});
+    }
 };
 
 const register = (req, res) => {

@@ -1,3 +1,4 @@
+import * as sessionsViewService from '../../services/sessionsView.service.js';
 
 const register = async (req, res) => {
     res.send({ status: 'success', message: 'User registered' })
@@ -11,19 +12,8 @@ const login = async (req, res) => {
     if (!req.user) return res.status(400)
         .send({ status: 'error', message: 'Invalid credentials' });
 
-    let rol;
-    if(req.user.email.slice(0,5) === 'admin') rol = 'admin';
-    else rol = 'usuario';
-
-    delete req.user.password; 
-
-    req.session.user = {
-        name: `${req.user.first_name} ${req.user.last_name}`,
-        age: req.user.age,
-        email: req.user.email,
-        rol: rol
-    }
-
+    const result = await sessionsViewService.login(req);
+    req.session.user = result;
     res.send({ status: 'success', message: 'login success' });
 };
 
@@ -35,14 +25,11 @@ const authGithub = async (req, res) => {
     res.send({ status: 'succes', message:'user Registered'});
 };
 
-const authGithubCallback = (req, res) => {
-    req.session.user = {
-        name: `${req.user.first_name} ${req.user.last_name}`,
-        age: req.user.age,
-        email: req.user.email,
-        // rol: rol
-    }
-
+const authGithubCallback =  (req, res) => {
+    
+    const result = sessionsViewService.authGithubCallback(req);
+    req.session.user = result;
+    
     res.redirect('/products');   
 };
 

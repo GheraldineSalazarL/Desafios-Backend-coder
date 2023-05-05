@@ -1,10 +1,8 @@
-import Carts from '../../dao/dbManagers/carts.js' 
-const cartsManager = new Carts();
+import * as cartsService from '../../services/carts.service.js';
 
 const saveCart = async (req, res) => {
-
     try{
-        const result = await cartsManager.save();
+        const result = await cartsService.saveCart();
         res.send({status: 'sucess', message:'Carrito creado', payload: result});
     } catch(error){
         res.status(500).send({error});
@@ -12,25 +10,25 @@ const saveCart = async (req, res) => {
 };
 
 const getCart = async(req,res)=> {
-    const cid = req.params.cid;
-    // await manager.getById(cid)
-
     try{
-        const cart = await cartsManager.getById(cid);
-        cart ? res.send({status: 'sucess', payload: cart.products}) : res.send({status: 'error', message:`Carrito no encontrado`})
+        const cid = req.params.cid;
+        // await manager.getById(cid)
+
+        const result = await cartsService.getCart(cid);
+        result ? res.send({status: 'sucess', payload: result}) : res.send({status: 'error', message:`Carrito no encontrado`})
     } catch(error){
         res.status(500).send({error});
     }
 };
 
 const saveProductToCart = async (req, res) => {
-    const cid = req.params.cid;
-    const pid = req.params.pid;
-
     try{
-        const resp = await cartsManager.saveId(cid, pid);
+        const cid = req.params.cid;
+        const pid = req.params.pid;
 
-        resp ?  res.send({status: 'sucess', message:'Producto agregado al carrito'}) : res.send({status: 'error', message: 'Carrito no encontrado'})
+        const result = await cartsService.saveProductToCart(cid, pid);
+
+        result ?  res.send({status: 'sucess', message:'Producto agregado al carrito'}) : res.send({status: 'error', message: 'Carrito no encontrado'})
 
     } catch(error){
         res.status(500).send({error});
@@ -39,14 +37,14 @@ const saveProductToCart = async (req, res) => {
 };
 
 const deleteProductToCart = async (req, res) => {
-    const cid = req.params.cid;
-    const pid = req.params.pid;
-
     try{
-        const resp = await cartsManager.deleteId(cid, pid);
+        const cid = req.params.cid;
+        const pid = req.params.pid;
+
+        const result = await cartsService.deleteProductToCart(cid, pid);
         
-        resp  
-            ? resp === "error" 
+        result  
+            ? result === "error" 
                 ? res.send({status: 'error', message: 'Producto no encontrado dentro del carrito'})
                 : res.send({status: 'sucess', message:'Producto eliminado del carrito'})
             : res.send({status: 'error', message: 'Carrito no encontrado'});        
@@ -56,27 +54,28 @@ const deleteProductToCart = async (req, res) => {
 };
 
 const updateCart = async(req,res)=> {
-    const productsUpdate = req.body;
-    const cid = req.params.cid;
-
     try{
-        const cart = await cartsManager.update(cid, productsUpdate);
-        cart ? res.send({status: 'sucess', message:`Carrito modificado`}) : res.send({status: 'error', message:`Carrito no encontrado`})
+        const productsUpdate = req.body;
+        const cid = req.params.cid;
+        
+        const result = await cartsService.updateCart(cid, productsUpdate);
+
+        result ? res.send({status: 'sucess', message:`Carrito modificado`}) : res.send({status: 'error', message:`Carrito no encontrado`})
     } catch(error){
         res.status(500).send({error});
     }
 };
 
 const updateQuantityProductToCart = async (req, res) => {
-    const cid = req.params.cid;
-    const pid = req.params.pid;
-    const quantityUpdate = req.body;
-
     try{
-        const resp = await cartsManager.updateQuantity(cid, pid, quantityUpdate);
+        const cid = req.params.cid;
+        const pid = req.params.pid;
+        const quantityUpdate = req.body;
 
-        resp  
-            ? resp === "error" 
+        const result = await cartsService.updateQuantityProductToCart(cid, pid, quantityUpdate);
+
+        result  
+            ? result === "error" 
                 ? res.send({status: 'error', message: 'Producto no encontrado dentro del carrito'})
                 : res.send({status: 'sucess', message:'Cantidad del producto modificado'})
             : res.send({status: 'error', message: 'Carrito no encontrado'});     
@@ -87,35 +86,24 @@ const updateQuantityProductToCart = async (req, res) => {
 };
 
 const deleteAllProductsToCart = async (req, res) => {
-    const cid = req.params.cid;
-
     try{
-        const resp = await cartsManager.deleteAll(cid);
+        const cid = req.params.cid;
 
-        resp ? res.send({status: 'sucess', message:`Productos eliminados del carrito`}) : res.send({status: 'error', message:`Carrito no encontrado`})
+        const result = await cartsService.deleteAllProductsToCart(cid);
+
+        result ? res.send({status: 'sucess', message:`Productos eliminados del carrito`}) : res.send({status: 'error', message:`Carrito no encontrado`})
     } catch(error){
         res.status(500).send({error});
     }
 };
 
 const saveProductToCartSession = async (req, res) => {
-    const pid = req.params.id;
-
     try {
-        let cart;
-        if (!req.session.user.cart) {
-            cart = await cartsManager.save();
-            req.session.user.cart = cart._id;
-        } else {
-            cart = await cartsManager.getById(req.session.user.cart);
-        }
-
-        const cid = cart._id;
-        await cartsManager.saveId(cid, pid);
-        req.session.user.cart = cart._id;
-
-    } catch (err) {
-        console.log(err);
+        const pid = req.params.id;
+        const result = await cartsService.saveProductToCartSession(pid, req);
+        res.send({status: 'sucess', result});
+    } catch (error) {
+        console.log(error);
     }
 };
 
