@@ -81,13 +81,13 @@ export default class Router {
         // req.user = user;
         // next();
 
-        //------------------------------------------------------------------------------
+        // ------------Middleware para verificar el token en las solicitudes posteriores---------------
         const authToken = req.headers["authorization"] || req.headers["Authorization"] 
         if(!authToken) return res.status(401).json({ message: 'Not token provided' })
         
         const token = authToken.split(" ")[1]; 
         
-        const user = jwt.verify(token, PRIVATE_KEY); 
+        const user = jwt.verify(token, PRIVATE_KEY);
         if(!policies.includes(user.rol.toUpperCase()))
             return res.status(403).json({ message: 'Forbidden'})
         

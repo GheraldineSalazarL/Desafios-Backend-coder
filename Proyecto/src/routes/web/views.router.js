@@ -3,13 +3,13 @@ import { Router } from 'express';
 import { __dirname } from '../../utils.js';
 // import Products from '../../dao/dbManagers/products.js'
 // import Carts from '../../dao/dbManagers/carts.js';
-import { chat, getAllProducts, getCart, getProductsPaginate, login, privateAccess, profile, publicAccess, register, saveDeleteProductsSocket } from '../../controllers/web/views.controller.js';
+import { chat, getAllProducts, getCart, getProductsPaginate, login, privateAccess, privateUserAccess, privateAdminAccess, profile, publicAccess, register, saveDeleteProductsSocket } from '../../controllers/web/views.controller.js';
 
 const router = Router();
 
 router.get('/', privateAccess, getAllProducts); 
-router.get('/realtimeproducts', privateAccess, saveDeleteProductsSocket); 
-router.get('/chat', privateAccess, chat); 
+router.get('/realtimeproducts', privateAdminAccess, saveDeleteProductsSocket); 
+router.get('/chat', privateUserAccess, chat); 
 router.get('/products', privateAccess, getProductsPaginate); 
 router.get('/cart', privateAccess, getCart); 
 router.get('/register', publicAccess, register); 

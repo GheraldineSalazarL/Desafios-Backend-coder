@@ -15,9 +15,9 @@ const getCart = async(req,res)=> {
         // await manager.getById(cid)
 
         const result = await cartsService.getCart(cid);
-        result ? res.send({status: 'sucess', payload: result}) : res.send({status: 'error', message:`Carrito no encontrado`})
+        result ? res.sendSuccess(result) : res.sendClientError('Carrito no encontrado');
     } catch(error){
-        res.status(500).send({error});
+        res.sendServerError(error);
     }
 };
 

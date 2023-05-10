@@ -10,6 +10,18 @@ const privateAccess = (req, res, next) => {
     next();
 }
 
+const privateUserAccess = (req, res, next) => {
+    // if (!req.session.user) return res.redirect('/login'); 
+    if (req.session.user.rol != "user") return res.redirect('/products');
+    next();
+}
+
+const privateAdminAccess = (req, res, next) => {
+    // if (!req.session.user) return res.redirect('/login'); 
+    if (req.session.user.rol != "Admin") return res.redirect('/products');
+    next();
+}
+
 const getAllProducts = async (req, res) => {
     try {
         const products = await viewsService.getAllProducts(); 
@@ -24,6 +36,7 @@ const saveDeleteProductsSocket = async (req, res) => {
 };
 
 const chat = (req, res) => {
+    console.log(req.session.user.rol)
     res.render('chat', {style: 'chat.css'})
 };
 
@@ -77,6 +90,8 @@ const profile = (req, res) => {
 export { 
     publicAccess, 
     privateAccess, 
+    privateUserAccess, 
+    privateAdminAccess,
     getAllProducts, 
     saveDeleteProductsSocket, 
     chat, 

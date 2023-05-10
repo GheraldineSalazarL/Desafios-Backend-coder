@@ -26,8 +26,8 @@ socket.on('products', data => {
                                             <p>Precio: ${prod.price}</p>
                                             <p>Stock: ${prod.stock}</p>
                                             <p>Categoría: ${prod.category}</p>
-                                            <p>Id: ${prod.id}</p>
-                                            <button class="btn-delete" onClick="deleteClick(${prod.id})"><i class="fa-solid fa-trash")></i></button>
+                                            <p>Id: ${prod._id}</p>
+                                            <button class="btn-delete" onClick="deleteClick('${prod._id}')"><i class="fa-solid fa-trash")></i></button>
                                         </div>
                                     </div>
                                 </div>`;
@@ -37,6 +37,7 @@ socket.on('products', data => {
 deleteClick = (id) =>{
     socket.emit('spliced', id)
 }
+
 
 button.onclick = (e) =>{
     e.preventDefault()

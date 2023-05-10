@@ -10,12 +10,12 @@ const register = async (req, res) => {
 
         const user = { first_name, last_name, email, age, password, rol };
         
-        const result = await sessionsService.register(res, user);
+        const result = await sessionsService.register(user);
 
         if(result==='exist'){
             return res.sendClientError('User already exists');
         }
-        res.sendSuccess(newUserDB); 
+        res.sendSuccess(result); 
         
     } catch(error){
         console.log(error);

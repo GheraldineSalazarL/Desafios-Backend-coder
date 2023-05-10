@@ -1,16 +1,13 @@
 import express from "express";
 import handlebars from 'express-handlebars';
-// import mongoose from 'mongoose';
 import {__dirname} from './utils.js';
 import { Server } from 'socket.io';
-// import session from 'express-session';
-// import MongoStore from 'connect-mongo';
 import passport from 'passport';
-
+import cookieParser from 'cookie-parser';
 import initializePassport from './config/passport.config.js';
 
-import productsRouter from './routes/api/products.router.js';
-import cartsRouter from './routes/api/carts.router.js';
+// import productsRouter from './routes/api/products.router.js';
+// import cartsRouter from './routes/api/carts.router.js';
 import viewsRouter from './routes/web/views.router.js';
 import sessionsViewRouter from './routes/api/sessionsView.router.js';
 // import Manager from './dao/fileManagers/Manager.js';
@@ -20,12 +17,16 @@ import Chat from './dao/dbManagers/messages.js'
 
 import UsersRouter from "./routes/api/users.router.js";
 import SessionRouter from "./routes/api/sessions.router.js";
+import CartsRouter from "./routes/api/carts.router.js";
+import ProductsRouter from './routes/api/products.router.js';
 
 import './dao/dbConfig.js';
 import { sessionMiddleware } from "./dao/dbConfig.js";
 
 const usersRouter = new UsersRouter();
 const sessionRouter = new SessionRouter();
+const cartsRouter = new CartsRouter();
+const productsRouter = new ProductsRouter();
 
 const app = express ();
 
@@ -37,16 +38,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static(`${__dirname}/public`));
 
-// app.use(session({
-//     store: MongoStore.create({
-//         mongoUrl: 'mongodb+srv://gheeraldin:0TY8Sm5YXeGmNvoD@cluster0.jckhxnb.mongodb.net/?retryWrites=true&w=majority',
-//         mongoOptions: { useNewUrlParser: true },
-//         ttl: 3600
-//     }),
-//     secret: 'secretCoder',
-//     resave: true,
-//     saveUninitialized: true
-// }));
+app.use(cookieParser());
+
 app.use(sessionMiddleware);
 
 //Configuracion de passport
@@ -54,14 +47,19 @@ initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/api/products', productsRouter);
-app.use('/api/carts', cartsRouter);
+// app.use('/api/products', productsRouter);
+// app.use('/api/carts', cartsRouter);
 app.use('/', viewsRouter); 
 app.use('/api/sessionsView', sessionsViewRouter);
 app.use('/api/sessions', sessionRouter.getRouter());
 app.use('/api/users', usersRouter.getRouter());
+app.use('/api/carts', cartsRouter.getRouter());
+app.use('/api/products', productsRouter.getRouter());
 
 const server = app.listen(8080, () => console.log('Listening'));
+
+
+// -------------------------------------------------------socket----------------------------------------------------------------------------------
 
 const io = new Server(server);
 
@@ -108,12 +106,6 @@ io.on('connection', async socket => {
         socket.broadcast.emit('newUserConnected', data);
     });
 });
-
-// try{
-//     await mongoose.connect('mongodb+srv://gheeraldin:0TY8Sm5YXeGmNvoD@cluster0.jckhxnb.mongodb.net/?retryWrites=true&w=majority') 
-// } catch(error){
-//     console.log(`Cannot connect to database: ${error}`)
-// };
 
 
 

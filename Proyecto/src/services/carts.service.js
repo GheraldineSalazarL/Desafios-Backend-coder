@@ -1,54 +1,46 @@
-import Carts from '../dao/dbManagers/carts.js' 
+// import Carts from '../dao/dbManagers/carts.js' 
+import CartsRepository from '../repository/carts.repository.js';
 
-const cartsManager = new Carts();
+// const cartsManager = new Carts();
+const cartsRepository = new CartsRepository();
 
 export const saveCart = async () => {
-    const result = await cartsManager.save();
+    const result = await cartsRepository.saveCart();
     return result;
 };
 
 export const getCart = async(cid)=> {
-    const result = await cartsManager.getById(cid);
+    const result = await cartsRepository.getCart(cid);
     return result;
 };
 
 export const saveProductToCart = async (cid, pid) => {
-    const result = await cartsManager.saveId(cid, pid);
+    const result = await cartsRepository.saveProductToCart(cid, pid);
     return result;
     // await manager.saveId(cid, pid);
 };
 
 export const deleteProductToCart = async (cid, pid) => {
-    const result = await cartsManager.deleteId(cid, pid);
+    const result = await cartsRepository.deleteProductToCart(cid, pid);
     return result;       
 };
 
 export const updateCart = async(cid, productsUpdate)=> {
-    const result = await cartsManager.update(cid, productsUpdate);
+    const result = await cartsRepository.updateCart(cid, productsUpdate);
     return result;
 };
 
 export const updateQuantityProductToCart = async (cid, pid, quantityUpdate) => {
-    const result = await cartsManager.updateQuantity(cid, pid, quantityUpdate);
+    const result = await cartsRepository.updateQuantityProductToCart(cid, pid, quantityUpdate);
     return result;    
 };
 
 export const deleteAllProductsToCart = async (cid) => {
-    const result = await cartsManager.deleteAll(cid);
+    const result = await cartsRepository.deleteAllProductsToCart(cid);
     return result;
 };
 
 export const saveProductToCartSession = async (pid, req) => {
-        let cart;
-        if (!req.session.user.cart) {
-            cart = await cartsManager.save();
-            req.session.user.cart = cart._id;
-        } else {
-            cart = await cartsManager.getById(req.session.user.cart);
-        }
-
-        const cid = cart._id;
-        const result = await cartsManager.saveId(cid, pid);
-        req.session.user.cart = cart._id;
+        const result = await cartsRepository.saveProductToCartSession(pid, req);
         return result;
 };

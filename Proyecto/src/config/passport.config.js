@@ -7,6 +7,7 @@ import jwt from 'passport-jwt';
 // import { PRIVATE_KEY } from '../utils.js';
 import User from '../dao/dbManagers/users.js'
 import config from '../config/config.js'; 
+import UsersDto from '../dao/DTOs/users.dto.js';
 
 const PRIVATE_KEY = config.secret;
 const CLIENTID = config.clientId;
@@ -44,6 +45,11 @@ const initializePassport = () => {
                 rol,
                 password: createHash(password)
             }
+
+            // const userDto = new UsersDto(newUser)
+
+            // const hashPassword = createHash(password);
+            // userDto.password = hashPassword;
 
             const result = await usersManager.saveUser(newUser);
             return done(null, result);
@@ -109,12 +115,11 @@ const initializePassport = () => {
 
     //-------------------------------------------JWT--------------------------------------------
 
-    passport.use('jwt', new JWTStrategy({
+    passport.use('jwt', new JWTStrategy({ 
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey: PRIVATE_KEY//secretOrKey: PRIVATE_KEY
+        secretOrKey: PRIVATE_KEY
     }, async(jwt_payload, done) => {
         try {
-            console.log(jwt_payload);
             return done(null, jwt_payload.user);
         } catch (error) {
             return done(error);
