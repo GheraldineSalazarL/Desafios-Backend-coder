@@ -38,10 +38,6 @@ export default class SessionsRepository {
             return result;
          } 
         
-        // const usuario={
-        //     user : user.email, 
-        //     rol: user.rol
-        // }
         const userDto = new UsersDto(user)
         const userLog = {...userDto}
         const accessToken = generateToken(userLog);

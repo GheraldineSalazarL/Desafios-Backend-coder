@@ -1,7 +1,16 @@
-import CartsDto from '../dao/DTOs/carts.dto.js';
 import Carts from '../dao/dbManagers/carts.js';
+import Products from '../dao/dbManagers/products.js';
+import jwt from 'jsonwebtoken';
+import config from '../config/config.js';
+import { generateToken } from '../utils.js';
+import Tickets from '../dao/dbManagers/purchase.js';
+import uniqid from 'uniqid';
+
+const PRIVATE_KEY = config.secret;
 
 const cartsManager = new Carts();
+const productsManager = new Products();
+const ticketsManager = new Tickets();
 
 export default class CartsRepository {
     constructor(){
@@ -44,19 +53,77 @@ export default class CartsRepository {
         return result;
     };
     
-    saveProductToCartSession = async (pid, req) => {
+    saveProductToCartSession = async (pid, req, res) => {
+            const token = req.cookies.token;
+            const decodedToken = jwt.verify(token, PRIVATE_KEY);
+            
             let cart;
-            if (!req.session.user.cart) {
+            if (decodedToken.cart.length === 0) {
                 cart = await cartsManager.save();
-                req.session.user.cart = cart._id;
+                decodedToken.cart = cart._id;
+                const updatedToken = generateToken(decodedToken);
+                res.cookie('token', updatedToken, { httpOnly: true })
             } else {
-                cart = await cartsManager.getById(req.session.user.cart);
+                cart = await cartsManager.getById(decodedToken.cart);
             }
     
             const cid = cart._id;
             const result = await cartsManager.saveId(cid, pid);
-            req.session.user.cart = cart._id;
-            console.log(req.session.user.cart)
+
             return result;
     };
+
+    purchaseCart = async (cid, req) => {
+        const cart = await cartsManager.getById(cid);
+        if(!cart) return "cart not found";
+
+        const productsPurchase = [];
+        const ProductsCanceled = [];
+
+        for (const item of cart.products) {
+            const product = await productsManager.getById(item.product);
+
+            if (!product) {
+                return `Product ${item._id} not found`;
+            }
+      
+            if (product.stock >= item.quantity) {
+                const price = product.price;
+                productsPurchase.push({...item, price});
+                product.stock -= item.quantity;
+                await productsManager.update({"stock": product.stock}, product._id);
+            } else {
+                ProductsCanceled.push(item)
+            }
+        }
+
+        let total = 0;
+        for (const product of productsPurchase) {
+            const subtotal = product.price * product.quantity;
+          
+            total += subtotal;
+        }
+
+        await cartsManager.update(cid, ProductsCanceled);
+        
+        const code = uniqid();
+        const purchaseDatetime = new Date();
+        const token = req.cookies.token;
+        const decodedToken = jwt.verify(token, PRIVATE_KEY);
+        const ticket = {
+            code: code,
+            date: purchaseDatetime,
+            amount: total, 
+            purchaser: decodedToken.email
+        }
+        await ticketsManager.save(ticket);
+
+        const ticketResult = {
+            productsPurchased: productsPurchase,
+            total: total,
+            productsUnpurchased: ProductsCanceled
+        }
+
+        return ticketResult;
+};
 }

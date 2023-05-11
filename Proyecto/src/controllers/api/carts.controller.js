@@ -100,12 +100,25 @@ const deleteAllProductsToCart = async (req, res) => {
 const saveProductToCartSession = async (req, res) => {
     try {
         const pid = req.params.id;
-        const result = await cartsService.saveProductToCartSession(pid, req);
+        const result = await cartsService.saveProductToCartSession(pid, req, res);
         res.send({status: 'sucess', result});
     } catch (error) {
-        console.log(error);
+        res.status(500).send({error});
     }
 };
+
+const purchaseCart = async (req, res) => {
+    try {
+        const cid = req.params.cid;
+
+        const result = await cartsService.purchaseCart(cid, req);
+        res.send({status: 'sucess', result});
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({error});
+    }
+};
+
 
 export {
     saveCart,
@@ -115,5 +128,6 @@ export {
     updateCart,
     updateQuantityProductToCart,
     deleteAllProductsToCart,
-    saveProductToCartSession
+    saveProductToCartSession,
+    purchaseCart
 }

@@ -40,7 +40,12 @@ export const deleteAllProductsToCart = async (cid) => {
     return result;
 };
 
-export const saveProductToCartSession = async (pid, req) => {
-        const result = await cartsRepository.saveProductToCartSession(pid, req);
+export const saveProductToCartSession = async (pid, req, res) => {
+        const result = await cartsRepository.saveProductToCartSession(pid, req, res);
         return result;
+};
+
+export const purchaseCart = async (cid, req) => {
+    const result = await cartsRepository.purchaseCart(cid, req);
+    return result;
 };

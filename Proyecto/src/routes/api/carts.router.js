@@ -1,6 +1,6 @@
 // import { Router } from 'express'
 import { __dirname} from '../../utils.js';
-import { saveCart, getCart, saveProductToCart, deleteProductToCart, updateCart, updateQuantityProductToCart, deleteAllProductsToCart, saveProductToCartSession } from '../../controllers/api/carts.controller.js';
+import { saveCart, getCart, saveProductToCart, deleteProductToCart, updateCart, updateQuantityProductToCart, deleteAllProductsToCart, saveProductToCartSession, purchaseCart } from '../../controllers/api/carts.controller.js';
 import Router from './router.js'
 
 // const router = Router();
@@ -26,5 +26,6 @@ export default class CartsRouter extends Router{
         this.put('/:cid/product/:pid', ['PUBLIC'], updateQuantityProductToCart); 
         this.delete('/:cid', ['PUBLIC'], deleteAllProductsToCart); 
         this.post('/cart/add/:id', ['USER'], saveProductToCartSession); 
+        this.post('/:cid/purchase', ['PUBLIC'], purchaseCart); 
     }
 }
