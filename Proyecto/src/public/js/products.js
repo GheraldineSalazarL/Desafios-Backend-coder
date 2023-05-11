@@ -11,3 +11,7 @@ function addCart(id) {
     .catch(error => console.error(error));
 }
 
+
+
+
+

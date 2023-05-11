@@ -73,20 +73,21 @@ export default class Router {
     handlePolicies = (policies) => (req, res, next) => {
         if (policies[0] === "PUBLIC") return next();
 
-        // const user = req.user;
-
-        // if (!policies.includes(user.rol.toUpperCase()))
-        //     return res.status(403).json({ error: 'Forbidden' });
-
-        // req.user = user;
-        // next();
 
         // ------------Middleware para verificar el token en las solicitudes posteriores---------------
-        const authToken = req.headers["authorization"] || req.headers["Authorization"] 
-        if(!authToken) return res.status(401).json({ message: 'Not token provided' })
+        function extractTokenFromBearer(req) {
+            const authToken = req.headers["authorization"] || req.headers["Authorization"] || req.cookies.token;
+            if(!authToken) return res.status(401).json({ message: 'Not token provided' })
         
-        const token = authToken.split(" ")[1]; 
+            return authToken.split(" ")[1]; 
+        }
+
+        function extractTokenFromCookie(req) {
+            return req.cookies.token;
+        }
         
+        const token = extractTokenFromBearer(req) || extractTokenFromCookie(req);
+
         const user = jwt.verify(token, PRIVATE_KEY);
         if(!policies.includes(user.rol.toUpperCase()))
             return res.status(403).json({ message: 'Forbidden'})

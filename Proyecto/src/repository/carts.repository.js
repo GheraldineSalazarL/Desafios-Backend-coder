@@ -56,6 +56,7 @@ export default class CartsRepository {
             const cid = cart._id;
             const result = await cartsManager.saveId(cid, pid);
             req.session.user.cart = cart._id;
+            console.log(req.session.user.cart)
             return result;
     };
 }

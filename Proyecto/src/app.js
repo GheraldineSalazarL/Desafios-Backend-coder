@@ -9,7 +9,7 @@ import initializePassport from './config/passport.config.js';
 // import productsRouter from './routes/api/products.router.js';
 // import cartsRouter from './routes/api/carts.router.js';
 import viewsRouter from './routes/web/views.router.js';
-import sessionsViewRouter from './routes/api/sessionsView.router.js';
+import authGithub from './routes/api/authGithub.router.js';
 // import Manager from './dao/fileManagers/Manager.js';
 
 import Products from './dao/dbManagers/products.js';
@@ -38,9 +38,9 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static(`${__dirname}/public`));
 
-app.use(cookieParser());
-
 app.use(sessionMiddleware);
+
+app.use(cookieParser());
 
 //Configuracion de passport
 initializePassport();
@@ -50,7 +50,7 @@ app.use(passport.session());
 // app.use('/api/products', productsRouter);
 // app.use('/api/carts', cartsRouter);
 app.use('/', viewsRouter); 
-app.use('/api/sessionsView', sessionsViewRouter);
+app.use('/api/authGithub', authGithub);
 app.use('/api/sessions', sessionRouter.getRouter());
 app.use('/api/users', usersRouter.getRouter());
 app.use('/api/carts', cartsRouter.getRouter());

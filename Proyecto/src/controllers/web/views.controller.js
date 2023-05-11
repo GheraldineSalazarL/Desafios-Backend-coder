@@ -1,25 +1,38 @@
 import * as viewsService from '../../services/views.service.js';
+import jwt from 'jsonwebtoken';
+import config from '../../config/config.js';
+
+const PRIVATE_KEY = config.secret;
+
+const privateAccess = (req, res, next) => {
+    const token = req.cookies.token;
+    if (token) {
+    jwt.verify(token, PRIVATE_KEY, (err, decoded) => {
+        req.session.user = decoded;
+        next();
+    });
+    } else {
+    res.redirect('/login');
+    }
+};
 
 const publicAccess = (req, res, next) => {
     if (req.session.user) return res.redirect('/products'); 
     next();
 }
 
-const privateAccess = (req, res, next) => {
-    if (!req.session.user) return res.redirect('/login'); 
-    next();
-}
-
 const privateUserAccess = (req, res, next) => {
-    // if (!req.session.user) return res.redirect('/login'); 
-    if (req.session.user.rol != "user") return res.redirect('/products');
-    next();
+    if (req.session.user) {
+        if(req.session.user.rol === "USER") {return next()};
+    } 
+    return res.redirect('/login')
 }
 
 const privateAdminAccess = (req, res, next) => {
-    // if (!req.session.user) return res.redirect('/login'); 
-    if (req.session.user.rol != "Admin") return res.redirect('/products');
-    next();
+    if (req.session.user) {
+        if(req.session.user.rol === "ADMIN") {return next()};
+    } 
+    return res.redirect('/login')
 }
 
 const getAllProducts = async (req, res) => {
@@ -63,6 +76,7 @@ const getProductsPaginate = async (req, res) => {
 
 const getCart = async (req, res) => {
     try {
+        console.log(`view cart: ${req.session.user.cart}`)
         let cid = req.session.user.cart;
 
         const cart = await viewsService.getCart(cid);

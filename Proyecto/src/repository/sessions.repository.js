@@ -17,12 +17,9 @@ export default class SessionsRepository {
             return result;
         }; 
         
-
-        // const userDto = new UsersDto(user)
-        
         const hashPassword = await hashData(user.password);
-        // userDto.password = hashPassword;
         user.password = hashPassword;
+        user.rol = user.rol.toUpperCase();
     
         const newUserDB = await usersManager.saveUser(user); 
         return newUserDB;
@@ -50,6 +47,6 @@ export default class SessionsRepository {
         const accessToken = generateToken(userLog);
         return accessToken; 
     };
+    
 }
 
-//sessions

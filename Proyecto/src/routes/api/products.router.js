@@ -17,8 +17,8 @@ export default class CartsRouter extends Router{
     init(){
         this.get('/', ['PUBLIC'], getProductsPaginate); 
         this.get('/:pid', ['PUBLIC'], getProduct); 
-        this.post('/', ['PUBLIC'], saveProduct); 
-        this.put('/:pid', ['PUBLIC'], updateProduct); 
-        this.delete('/:pid', ['PUBLIC'], deleteProduct); 
+        this.post('/', ['ADMIN'], saveProduct); 
+        this.put('/:pid', ['ADMIN'], updateProduct); 
+        this.delete('/:pid', ['ADMIN'], deleteProduct); 
     }
 }

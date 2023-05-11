@@ -1,8 +1,5 @@
 import { Router } from 'express';
-// import Manager from '../../dao/fileManagers/Manager.js';
 import { __dirname } from '../../utils.js';
-// import Products from '../../dao/dbManagers/products.js'
-// import Carts from '../../dao/dbManagers/carts.js';
 import { chat, getAllProducts, getCart, getProductsPaginate, login, privateAccess, privateUserAccess, privateAdminAccess, profile, publicAccess, register, saveDeleteProductsSocket } from '../../controllers/web/views.controller.js';
 
 const router = Router();

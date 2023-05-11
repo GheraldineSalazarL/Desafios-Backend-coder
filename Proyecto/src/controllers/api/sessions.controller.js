@@ -34,6 +34,7 @@ const login = async (req, res) => {
         
         if(!result) return res.sendClientError('Incorrect credentials'); 
         
+        res.cookie('token', result, { httpOnly: true });
         res.sendSuccess({result}); 
 
     } catch(error){
@@ -42,7 +43,21 @@ const login = async (req, res) => {
     }
 };
 
+const logout = async (req, res) => {
+    try{
+        res.clearCookie('token');
+        req.session.destroy(err => {
+            if (err) return res.status(500).send({ status: 'error', error: 'couldnt logout' });
+            res.redirect('/login');
+        })
+    } catch(error){
+        console.log(error);
+        res.sendServerError(error);
+    }
+};
+
 export { 
     register,
-    login
+    login, 
+    logout
 }
