@@ -1,5 +1,9 @@
 // import Carts from '../dao/dbManagers/carts.js' 
 import CartsRepository from '../repository/carts.repository.js';
+import { transporter } from '../utils.js';
+import config from '../config/config.js'; 
+
+const EMAILTO = config.emailTo;
 
 // const cartsManager = new Carts();
 const cartsRepository = new CartsRepository();
@@ -47,5 +51,23 @@ export const saveProductToCartSession = async (pid, req, res) => {
 
 export const purchaseCart = async (cid, req) => {
     const result = await cartsRepository.purchaseCart(cid, req);
+
+    const productsPurchased = result.productsPurchased.map(item => item.product.title);
+    const productsUnpurchased = result.productsUnpurchased.map(item => item.product.title);
+
+    await transporter.sendMail({
+        from: 'Compra Realizada <compras@compras.com>',
+        to: `${EMAILTO}`,
+        subject: 'Tu compra ha sido realizada',
+        html: `<div> <h1> Compra exitosa </h1>  
+                    <p>Productos comprados: ${productsPurchased}</p>
+                    <p>TOTAL: ${result.total}</p>
+                    <p></p>
+                    <p>Productos que no compraste por falta de stock: ${productsUnpurchased}</p>
+                    <p></p>
+                    <h4>Gracias por tu compra</h4>
+                </div>`
+    });
+
     return result;
 };

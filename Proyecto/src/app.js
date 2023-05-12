@@ -6,14 +6,11 @@ import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import initializePassport from './config/passport.config.js';
 
-// import productsRouter from './routes/api/products.router.js';
-// import cartsRouter from './routes/api/carts.router.js';
-import viewsRouter from './routes/web/views.router.js';
-import authGithub from './routes/api/authGithub.router.js';
-// import Manager from './dao/fileManagers/Manager.js';
-
 import Products from './dao/dbManagers/products.js';
 import Chat from './dao/dbManagers/messages.js'
+
+import viewsRouter from './routes/web/views.router.js';
+import authGithub from './routes/api/authGithub.router.js';
 
 import UsersRouter from "./routes/api/users.router.js";
 import SessionRouter from "./routes/api/sessions.router.js";
@@ -59,7 +56,7 @@ app.use('/api/products', productsRouter.getRouter());
 const server = app.listen(8080, () => console.log('Listening'));
 
 
-// -------------------------------------------------------socket----------------------------------------------------------------------------------
+// ----------------------------------socket--------------------------------------
 
 const io = new Server(server);
 

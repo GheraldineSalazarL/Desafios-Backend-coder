@@ -7,5 +7,12 @@ export default {
     mongoUrl: process.env.MONGO_URL,
     secret: process.env.SECRET,
     clientId: process.env.CLIENTID,
-    clientSecret: process.env.CLIENTSECRET
+    clientSecret: process.env.CLIENTSECRET,
+
+    //nodemailer
+    service: process.env.SERVICE,
+    port: process.env.PORT,
+    user: process.env.USER,
+    pass: process.env.PASS,
+    emailTo: process.env.EMAILTO
 }

@@ -3,19 +3,6 @@ import { __dirname} from '../../utils.js';
 import { saveCart, getCart, saveProductToCart, deleteProductToCart, updateCart, updateQuantityProductToCart, deleteAllProductsToCart, saveProductToCartSession, purchaseCart } from '../../controllers/api/carts.controller.js';
 import Router from './router.js'
 
-// const router = Router();
-
-// router.post('/', saveCart); 
-// router.get('/:cid', getCart); 
-// router.post('/:cid/product/:pid', saveProductToCart); 
-// router.delete('/:cid/product/:pid', deleteProductToCart); 
-// router.put('/:cid', updateCart); 
-// router.put('/:cid/product/:pid', updateQuantityProductToCart); 
-// router.delete('/:cid', deleteAllProductsToCart); 
-// router.post('/cart/add/:id', saveProductToCartSession); 
-
-// export default router;
-
 export default class CartsRouter extends Router{
     init(){
         this.post('/', ['PUBLIC'], saveCart); 
@@ -26,6 +13,6 @@ export default class CartsRouter extends Router{
         this.put('/:cid/product/:pid', ['PUBLIC'], updateQuantityProductToCart); 
         this.delete('/:cid', ['PUBLIC'], deleteAllProductsToCart); 
         this.post('/cart/add/:id', ['USER'], saveProductToCartSession); 
-        this.post('/:cid/purchase', ['PUBLIC'], purchaseCart); 
+        this.post('/:cid/purchase', ['USER'], purchaseCart); 
     }
 }

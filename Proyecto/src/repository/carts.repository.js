@@ -108,20 +108,22 @@ export default class CartsRepository {
         
         const code = uniqid();
         const purchaseDatetime = new Date();
-        const token = req.cookies.token;
-        const decodedToken = jwt.verify(token, PRIVATE_KEY);
+        // const token = req.cookies.token;
+        // const decodedToken = jwt.verify(token, PRIVATE_KEY);
+        const user = req.user;
+        console.log(user)
         const ticket = {
             code: code,
             date: purchaseDatetime,
             amount: total, 
-            purchaser: decodedToken.email
+            purchaser: user.email
         }
         await ticketsManager.save(ticket);
 
         const ticketResult = {
             productsPurchased: productsPurchase,
             total: total,
-            productsUnpurchased: ProductsCanceled
+            productsUnpurchased: ProductsCanceled,
         }
 
         return ticketResult;
