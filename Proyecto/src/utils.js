@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import config from './config/config.js'; 
 import nodemailer from 'nodemailer';
+import { faker } from '@faker-js/faker/locale/es'; 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,6 +41,23 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+//Faker
+// faker.locale = 'es'; //deprecado 
+const generateProduct = () => {
+    return {
+        title: faker.commerce.productName(),
+        description: faker.commerce.productDescription(),
+        code: faker.string.alphanumeric(10),
+        price: faker.commerce.price(),
+        status: faker.helpers.arrayElement(["true", "false"]),
+        stock: faker.string.numeric(1),
+        category: faker.commerce.department(),
+        thumbnails: faker.image.url(),
+        id: faker.database.mongodbObjectId(),    
+    }
+}
+
+
 export {
     __dirname,
     createHash,
@@ -48,6 +66,7 @@ export {
     compareHashedData,
     generateToken,
     PRIVATE_KEY,
-    transporter
+    transporter, 
+    generateProduct
 }
 

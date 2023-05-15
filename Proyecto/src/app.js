@@ -20,6 +20,10 @@ import ProductsRouter from './routes/api/products.router.js';
 import './dao/dbConfig.js';
 import { sessionMiddleware } from "./dao/dbConfig.js";
 
+import CustomError from "./services/errors/CustomError.js";
+import EErrors from "./services/errors/enum.js";
+import { generateProductErrorInfo } from "./services/errors/info.js";
+
 const usersRouter = new UsersRouter();
 const sessionRouter = new SessionRouter();
 const cartsRouter = new CartsRouter();
@@ -76,6 +80,23 @@ io.on('connection', async socket => {
     io.emit('products', products);
 
     socket.on('newProduct',  async  data => {
+        console.log(data);
+        if(!data.title || !data.description || !data.code || !data.price || !data.stock || !data.category){
+            // return res.status(400).send({status: 'error', message:'Valores incompletos'});
+            throw CustomError.createError({
+                name: 'UserError',
+                cause: generateProductErrorInfo({
+                    title: data.title,
+                    description: data.description,
+                    code: data.code,
+                    price: data.price,
+                    stock: data.stock, 
+                    category: data.category
+                }),
+                message: 'Error tratando de crear un producto',
+                code: EErrors.INVALID_TYPES_ERROR
+            });
+        }
         await productsManager.save(data);
         // await manager.save(data);
         const productsAll = await productsManager.getAll();

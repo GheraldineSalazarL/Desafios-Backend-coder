@@ -1,3 +1,6 @@
+import CustomError from '../../services/errors/CustomError.js';
+import EErrors from '../../services/errors/enum.js';
+import { generateProductErrorInfo } from '../../services/errors/info.js';
 import * as productsService from '../../services/products.service.js'; 
 
 const getProductsPaginate = async (req, res) => {  
@@ -31,7 +34,20 @@ const saveProduct = async (req, res) => {
         const { title,description,code,price,status,stock,category,thumbnails,id } = req.body;    
 
         if(!title || !description || !code || !price || !stock || !category){
-            return res.status(400).send({status: 'error', message:'Valores incompletos'});
+            // return res.status(400).send({status: 'error', message:'Valores incompletos'});
+            throw CustomError.createError({
+                name: 'UserError',
+                cause: generateProductErrorInfo({
+                    title,
+                    description,
+                    code,
+                    price,
+                    stock, 
+                    category
+                }),
+                message: 'Error tratando de crear un producto',
+                code: EErrors.INVALID_TYPES_ERROR
+            });
         } 
 
         const product = {

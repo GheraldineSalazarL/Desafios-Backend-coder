@@ -75,18 +75,16 @@ export default class Router {
 
 
         // ------------Middleware para verificar el token en las solicitudes posteriores---------------
-        function extractTokenFromBearer(req) {
-            const authToken = req.headers["authorization"] || req.headers["Authorization"] || req.cookies.token;
-            if(!authToken) return res.status(401).json({ message: 'Not token provided' })
-        
-            return authToken.split(" ")[1]; 
-        }
 
-        function extractTokenFromCookie(req) {
-            return req.cookies.token;
-        }
+        const authToken1 = req.headers["authorization"] || req.headers["Authorization"];
+        const authToken2 = req.cookies.token;
         
-        const token = extractTokenFromBearer(req) || extractTokenFromCookie(req);
+        // let token = null;
+        // if(authToken1) {token = authToken1.split(" ")[1]};
+        // if(authToken2) {token = authToken2}; 
+        const token = ( authToken1 && authToken1.split(" ")[1] ) || authToken2;
+        console.log(`token ${token}`);
+            if(!token) return res.status(401).json({ message: 'Not token provided' })
 
         const user = jwt.verify(token, PRIVATE_KEY);
         if(!policies.includes(user.rol.toUpperCase()))

@@ -15,4 +15,5 @@ export default {
     user: process.env.USER,
     pass: process.env.PASS,
     emailTo: process.env.EMAILTO
+
 }

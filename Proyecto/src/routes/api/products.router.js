@@ -13,7 +13,7 @@ import Router from './router.js'
 
 // export default router;
 
-export default class CartsRouter extends Router{
+export default class ProductsRouter extends Router{
     init(){
         this.get('/', ['PUBLIC'], getProductsPaginate); 
         this.get('/:pid', ['PUBLIC'], getProduct); 
