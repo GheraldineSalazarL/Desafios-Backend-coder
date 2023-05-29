@@ -39,8 +39,10 @@ const getAllProducts = async (req, res) => {
     try {
         const products = await viewsService.getAllProducts(); 
         res.render('home', {products, style: 'home.css'});
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch (error) {
         res.status(500).send({error});
+        req.logger.error(`Error: ${req.method} en ${req.url} - ${new Date().toISOString()}`);
     }
 };
 
@@ -69,8 +71,10 @@ const getProductsPaginate = async (req, res) => {
             user: req.session.user, 
             style: 'home.css'
         });
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch (error) {
         res.status(500).send({error});
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
     }
 };
 
@@ -82,8 +86,10 @@ const getCart = async (req, res) => {
         const cart = await viewsService.getCart(cid);
 
         res.render('cart', {cart, style: 'cart.css'})
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch (error) {
         res.status(500).send({error});
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
     }
 };
 

@@ -9,6 +9,7 @@ export default class UsersManager {
 
     saveUser = async (user) => {
         let result = await userModel.create(user);
+        req.logger.info('Actualización de base de datos USER realizada');
         return result;
     }
 

@@ -21,6 +21,8 @@ export default class Carts {
         // }
 
         const result = await cartsModel.create({});
+
+        req.logger.info('Actualización de base de datos  CARTS realizada');
         return result;
     }
 
@@ -40,9 +42,11 @@ export default class Carts {
 
         if(indexProd > -1){
             const result = await cartsModel.updateOne({_id: {$eq: cid}, "products.product" : pid}, {$inc:{"products.$.quantity" : 1}});
+            req.logger.info('Actualización de base de datos  CARTS realizada');
             return result;
         } else{ 
             const result = await cartsModel.updateOne({_id: {$eq: cid}}, {$push:{products:{product:pid, quantity:1}}});
+            req.logger.info('Actualización de base de datos CARTS realizada');
             return result;
         }
     }  
@@ -57,6 +61,7 @@ export default class Carts {
 
         if(indexProd > -1){
             const result = await cartsModel.updateOne({ _id: cid }, { $pull: { products: { product: pid }}});
+            req.logger.info('Actualización de base de datos CARTS realizada');
             return result;
         } else{ 
             const result = "error";
@@ -70,6 +75,7 @@ export default class Carts {
         if (!cart) return;
 
         const result = await cartsModel.updateOne({ _id: cid }, { products: productsUpdate});
+        req.logger.info('Actualización de base de datos CARTS realizada');
         return result;
     }
 
@@ -83,6 +89,7 @@ export default class Carts {
 
         if(indexProd > -1){
             const result = await cartsModel.updateOne({_id: {$eq: cid}, "products.product" : pid}, {$inc:{"products.$.quantity" : quantityUpdate.quantity}});
+            req.logger.info('Actualización de base de datos CARTS realizada');
             return result;
         } else{ 
             const result = "error";
@@ -96,6 +103,7 @@ export default class Carts {
         if (!cart) return;
 
         const result = await cartsModel.updateOne({ _id: cid }, { products: []});
+        req.logger.info('Actualización de base de datos CARTS realizada');
         return result;
     }
 }

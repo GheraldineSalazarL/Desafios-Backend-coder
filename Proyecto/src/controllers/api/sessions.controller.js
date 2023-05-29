@@ -16,9 +16,10 @@ const register = async (req, res) => {
             return res.sendClientError('User already exists');
         }
         res.sendSuccess(result); 
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
         
     } catch(error){
-        console.log(error);
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
         res.sendServerError(error);
     }
 }
@@ -36,9 +37,10 @@ const login = async (req, res) => {
         
         res.cookie('token', result, { httpOnly: true });
         res.sendSuccess({result}); 
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
 
     } catch(error){
-        console.log(error);
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
         res.sendServerError(error);
     }
 };
@@ -50,8 +52,9 @@ const logout = async (req, res) => {
             if (err) return res.status(500).send({ status: 'error', error: 'couldnt logout' });
             res.redirect('/login');
         })
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch(error){
-        console.log(error);
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
         res.sendServerError(error);
     }
 };

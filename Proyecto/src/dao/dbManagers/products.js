@@ -43,6 +43,7 @@ export default class Products {
         // }
 
         const result = await productsModel.create(product);
+        req.logger.info('Actualización de base de datos PRODUCTS realizada');
         return result;
     }
 
@@ -52,6 +53,7 @@ export default class Products {
         if (!item) return;
 
         const updateItem = productsModel.updateOne({_id: {$eq:pid}}, {$set:productReq});  
+        req.logger.info('Actualización de base de datos PRODUCTS realizada');
         return updateItem; 
         
     }

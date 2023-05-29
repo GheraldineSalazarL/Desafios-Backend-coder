@@ -118,7 +118,7 @@ export default class Router {
             try {
                 await callback.apply(this, params);
             } catch (error) {
-                console.log(error);
+                req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
                 params[1].status(500).json({ error: error.message });
             }
         })

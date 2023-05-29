@@ -11,8 +11,8 @@ export default class Manager {
           const items = await promises.readFile(this.ruta, 'utf-8');
           return JSON.parse(items);
         } catch (error) {
-          console.log(error);
-          return [];
+            req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
+            return [];
         }
     }
 

@@ -10,8 +10,10 @@ const getProductsPaginate = async (req, res) => {
         const result = await productsService.getProductsPaginate(limit, page, sort, category, stock);
 
         res.send({status: 'success', result});
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch(error){
         res.status(500).send({error});
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
     }
 
 };
@@ -23,8 +25,10 @@ const getProduct = async(req,res)=> {
         const result = await productsService.getProduct(pid);
         
         result ? res.send({ status: 'success', result }) : res.status(400).send({status: 'error', message:`Producto no encontrado`})
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch (error) {
         res.status(500).send({ status:"error", message: error});  
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
     }
     
 };
@@ -67,6 +71,7 @@ const saveProduct = async (req, res) => {
         res.send({ result: 'success', result});
     }catch(error){
         res.status(500).send({error});
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
     }
 
     // const product = req.body;
@@ -84,8 +89,10 @@ const updateProduct = async (req,res)=> {
         const result = await productsService.updateProduct(productReq, pid);
 
         result ? res.send({status: 'sucess', message:'Producto Modificado'}) : res.send({status: 'error', message:`Producto no encontrado`})
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     }catch(error){
         res.status(500).send({status: 'error'});
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
     }
     // await manager.update(productReq, pid);
 };
@@ -97,8 +104,10 @@ const deleteProduct =  async (req,res)=> {
         const result = await productsService.deleteProduct(pid)
 
         result ?  res.send({status: 'sucess', message:'Producto eliminado'}) : res.send({status: 'error', message: 'Producto no encontrado'})
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     }catch(error){
         res.status(500).send({status: 'error'});
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
     }
 
     // const removedProduct = await manager.deleteById(pid)

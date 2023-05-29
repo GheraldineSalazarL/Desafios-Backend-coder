@@ -17,12 +17,17 @@ import SessionRouter from "./routes/api/sessions.router.js";
 import CartsRouter from "./routes/api/carts.router.js";
 import ProductsRouter from './routes/api/products.router.js';
 
+import { loggerTest } from "./routes/api/loggerTest.js";
+
 import './dao/dbConfig.js';
 import { sessionMiddleware } from "./dao/dbConfig.js";
 
 import CustomError from "./services/errors/CustomError.js";
 import EErrors from "./services/errors/enum.js";
 import { generateProductErrorInfo } from "./services/errors/info.js";
+import errorHandler from './middlewares/errors/index.js';
+
+import { addLogger } from "./logger.js";
 
 const usersRouter = new UsersRouter();
 const sessionRouter = new SessionRouter();
@@ -30,6 +35,9 @@ const cartsRouter = new CartsRouter();
 const productsRouter = new ProductsRouter();
 
 const app = express ();
+
+app.use(errorHandler);
+app.use(addLogger);
 
 app.engine('handlebars', handlebars.engine());
 app.set('views', `${__dirname}/views`);
@@ -56,6 +64,8 @@ app.use('/api/sessions', sessionRouter.getRouter());
 app.use('/api/users', usersRouter.getRouter());
 app.use('/api/carts', cartsRouter.getRouter());
 app.use('/api/products', productsRouter.getRouter());
+app.use('/loggerTest', loggerTest); 
+
 
 const server = app.listen(8080, () => console.log('Listening'));
 
@@ -98,6 +108,7 @@ io.on('connection', async socket => {
             });
         }
         await productsManager.save(data);
+        req.logger.info('Actualización de base de datos realizada');
         // await manager.save(data);
         const productsAll = await productsManager.getAll();
         io.emit('products', productsAll);
@@ -116,6 +127,7 @@ io.on('connection', async socket => {
     socket.on('message', async data => {
         messages.push(data);
         await chatManager.save(data);
+        req.logger.info('Actualización de base de datos realizada');
         io.emit('messageLogs', messages);
     });
 

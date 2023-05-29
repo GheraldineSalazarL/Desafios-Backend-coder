@@ -1,0 +1,11 @@
+{"level":"error","message":"Prueba error"}
+{"level":"error"}
+{"level":"error","message":"GET en / - 2023-05-29T01:33:31.589Z"}
+{"level":"error"}
+{"level":"error","message":"GET en / - 2023-05-29T01:36:35.052Z"}
+{"level":"fatal","message":"Prueba fatal"}
+{"level":"error","message":"Prueba error"}
+{"level":"fatal","message":"Prueba fatal"}
+{"level":"error","message":"Prueba error"}
+{"level":"fatal","message":"Prueba fatal"}
+{"level":"error","message":"Prueba error"}

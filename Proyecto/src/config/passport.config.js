@@ -93,6 +93,7 @@ const initializePassport = () => {
             }
         }catch(error){
             done(error)
+            req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
         }
     }));
 
@@ -115,6 +116,7 @@ const initializePassport = () => {
             return done(null, jwt_payload.user);
         } catch (error) {
             return done(error);
+            req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
         }
     }));
 
