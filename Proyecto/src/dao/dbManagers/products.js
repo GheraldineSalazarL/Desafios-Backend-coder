@@ -43,25 +43,25 @@ export default class Products {
         // }
 
         const result = await productsModel.create(product);
-        req.logger.info('Actualización de base de datos PRODUCTS realizada');
+        // req.logger.info('Actualización de base de datos PRODUCTS realizada');
         return result;
     }
 
     update = async(productReq, pid) => {
-        const item = await this.getById(pid);
+        // const item = await this.getById(pid);
 
-        if (!item) return;
+        // if (!item) return;
 
         const updateItem = productsModel.updateOne({_id: {$eq:pid}}, {$set:productReq});  
-        req.logger.info('Actualización de base de datos PRODUCTS realizada');
+        // req.logger.info('Actualización de base de datos PRODUCTS realizada');
         return updateItem; 
         
     }
 
     deleteById = async(pid) => {
-        const item = await this.getById(pid);
+        // const item = await this.getById(pid);
 
-        if (!item) return;
+        // if (!item) return;
         
         const removedItem = productsModel.deleteOne({_id:pid});  
         return removedItem; 

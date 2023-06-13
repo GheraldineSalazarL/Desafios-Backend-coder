@@ -30,7 +30,7 @@ const privateUserAccess = (req, res, next) => {
 
 const privateAdminAccess = (req, res, next) => {
     if (req.session.user) {
-        if(req.session.user.rol === "ADMIN") {return next()};
+        if(req.session.user.rol === "ADMIN" || req.session.user.rol === "PREMIUM") {return next()};
     } 
     return res.redirect('/login')
 }
@@ -42,7 +42,7 @@ const getAllProducts = async (req, res) => {
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch (error) {
         res.status(500).send({error});
-        req.logger.error(`Error: ${req.method} en ${req.url} - ${new Date().toISOString()}`);
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
 };
 
@@ -74,7 +74,7 @@ const getProductsPaginate = async (req, res) => {
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch (error) {
         res.status(500).send({error});
-        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
 };
 
@@ -89,7 +89,7 @@ const getCart = async (req, res) => {
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch (error) {
         res.status(500).send({error});
-        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
 };
 
@@ -107,6 +107,14 @@ const profile = (req, res) => {
     });
 };
 
+const forgotPassword = (req, res) => {
+    res.render('forgotPassword', { style: 'login.css' });
+}; 
+
+const resetPassword = (req, res) => {
+    res.render('resetPassword', { style: 'login.css' });
+};
+
 export { 
     publicAccess, 
     privateAccess, 
@@ -119,5 +127,7 @@ export {
     getCart, 
     register, 
     login, 
-    profile
+    profile, 
+    forgotPassword,
+    resetPassword
 }

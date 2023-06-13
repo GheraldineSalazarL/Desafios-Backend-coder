@@ -17,8 +17,8 @@ export default class ProductsRouter extends Router{
     init(){
         this.get('/', ['PUBLIC'], getProductsPaginate); 
         this.get('/:pid', ['PUBLIC'], getProduct); 
-        this.post('/', ['ADMIN'], saveProduct); 
-        this.put('/:pid', ['ADMIN'], updateProduct); 
-        this.delete('/:pid', ['ADMIN'], deleteProduct); 
+        this.post('/', ['ADMIN', 'PREMIUM'], saveProduct); 
+        this.put('/:pid', ['ADMIN', 'PREMIUM'], updateProduct); 
+        this.delete('/:pid', ['ADMIN', 'PREMIUM'], deleteProduct); 
     }
 }

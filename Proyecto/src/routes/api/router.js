@@ -83,13 +83,13 @@ export default class Router {
         // if(authToken1) {token = authToken1.split(" ")[1]};
         // if(authToken2) {token = authToken2}; 
         const token = ( authToken1 && authToken1.split(" ")[1] ) || authToken2;
-        console.log(`token ${token}`);
             if(!token) return res.status(401).json({ message: 'Not token provided' })
 
         const user = jwt.verify(token, PRIVATE_KEY);
-        if(!policies.includes(user.rol.toUpperCase()))
-            return res.status(403).json({ message: 'Forbidden'})
-        
+        if(!policies.includes(user.rol.toUpperCase())){
+            res.status(403).json({ message: 'Forbidden'})
+            return req.logger.error('Forbidden');
+        }
         req.user = user;
         next();
     }
@@ -118,8 +118,8 @@ export default class Router {
             try {
                 await callback.apply(this, params);
             } catch (error) {
-                req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
-                params[1].status(500).json({ error: error.message });
+                // req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
+                // params[1].status(500).json({ error: error.message });
             }
         })
     }

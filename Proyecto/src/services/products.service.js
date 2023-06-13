@@ -1,4 +1,5 @@
 import Products from '../dao/dbManagers/products.js';
+import { ResultNotFound } from '../utils/customExceptions.js';
 
 const productsManager = new Products();
 
@@ -36,6 +37,9 @@ export const getProductsPaginate = async (limit, page, sort, category, stock) =>
 export const getProduct = async(pid)=> {
     // const product = await manager.getById(pid);
     const result = await productsManager.getById(pid);
+    if(result===null){
+        throw new ResultNotFound('product not found');
+    }
     return result;
 };
 

@@ -93,7 +93,7 @@ const initializePassport = () => {
             }
         }catch(error){
             done(error)
-            req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
+            req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
         }
     }));
 
@@ -115,8 +115,8 @@ const initializePassport = () => {
         try {
             return done(null, jwt_payload.user);
         } catch (error) {
+            req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
             return done(error);
-            req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
         }
     }));
 

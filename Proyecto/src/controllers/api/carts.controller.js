@@ -1,4 +1,5 @@
 import * as cartsService from '../../services/carts.service.js';
+import { ResultNotFound } from '../../utils/customExceptions.js';
 
 const saveCart = async (req, res) => {
     try{
@@ -7,7 +8,7 @@ const saveCart = async (req, res) => {
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch(error){
         res.status(500).send({error});
-        req.logger.error(`Prueba error`);
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
 };
 
@@ -17,11 +18,15 @@ const getCart = async(req,res)=> {
         // await manager.getById(cid)
 
         const result = await cartsService.getCart(cid);
-        result ? res.sendSuccess(result) : res.sendClientError('Carrito no encontrado');
+        // result ? res.sendSuccess(result) : res.sendClientError('Carrito no encontrado');
+        res.sendSuccess(result)
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch(error){
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
+        if(error instanceof ResultNotFound){
+            res.sendClientError('Carrito no encontrado')
+        }
         res.sendServerError(error);
-        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
     }
 };
 
@@ -36,7 +41,7 @@ const saveProductToCart = async (req, res) => {
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch(error){
         res.status(500).send({error});
-        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
     // await manager.saveId(cid, pid);
 };
@@ -56,7 +61,7 @@ const deleteProductToCart = async (req, res) => {
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch(error){
         res.status(500).send({error});
-        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
 };
 
@@ -71,7 +76,7 @@ const updateCart = async(req,res)=> {
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch(error){
         res.status(500).send({error});
-        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
 };
 
@@ -91,7 +96,7 @@ const updateQuantityProductToCart = async (req, res) => {
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch(error){
         res.status(500).send({error});
-        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
 };
 
@@ -105,19 +110,20 @@ const deleteAllProductsToCart = async (req, res) => {
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch(error){
         res.status(500).send({error});
-        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
 };
 
 const saveProductToCartSession = async (req, res) => {
     try {
         const pid = req.params.id;
+
         const result = await cartsService.saveProductToCartSession(pid, req, res);
         res.send({status: 'sucess', result});
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch (error) {
         res.status(500).send({error});
-        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
 };
 
@@ -131,7 +137,7 @@ const purchaseCart = async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(500).send({error});
-        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
 };
 

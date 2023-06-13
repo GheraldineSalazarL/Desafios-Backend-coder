@@ -5,6 +5,7 @@ import config from '../config/config.js';
 import { generateToken } from '../utils.js';
 import Tickets from '../dao/dbManagers/purchase.js';
 import uniqid from 'uniqid';
+import { ResultNotFound } from '../utils/customExceptions.js';
 
 const PRIVATE_KEY = config.secret;
 
@@ -24,6 +25,9 @@ export default class CartsRepository {
     
     getCart = async(cid)=> {
         const result = await cartsManager.getById(cid);
+        if(result===null){
+            throw new ResultNotFound('cart not found');
+        }
         return result;
     };
     
@@ -53,25 +57,27 @@ export default class CartsRepository {
         return result;
     };
     
-    saveProductToCartSession = async (pid, req, res) => {
-            const token = req.cookies.token;
-            const decodedToken = jwt.verify(token, PRIVATE_KEY);
+    // saveProductToCartSession = async (pid, req, res) => {
+    //         const token = req.cookies.token;
+    //         const decodedToken = jwt.verify(token, PRIVATE_KEY);
             
-            let cart;
-            if (decodedToken.cart.length === 0) {
-                cart = await cartsManager.save();
-                decodedToken.cart = cart._id;
-                const updatedToken = generateToken(decodedToken);
-                res.cookie('token', updatedToken, { httpOnly: true })
-            } else {
-                cart = await cartsManager.getById(decodedToken.cart);
-            }
-    
-            const cid = cart._id;
-            const result = await cartsManager.saveId(cid, pid);
+    //         let cart;
+    //         if (decodedToken.cart.length === 0) {
+    //             cart = await cartsManager.save();
+    //             decodedToken.cart = cart._id;
+    //             const updatedToken = generateToken(decodedToken);
+    //             res.cookie('token', updatedToken, { httpOnly: true })
+    //         } else {
+    //             cart = await cartsManager.getById(decodedToken.cart);
+    //         }
 
-            return result;
-    };
+    //         // const product = await productsManager.getById(pid); 
+    
+    //         const cid = cart._id;
+    //         const result = await cartsManager.saveId(cid, pid);
+
+    //         return result;
+    // };
 
     purchaseCart = async (cid, req) => {
         const cart = await cartsManager.getById(cid);

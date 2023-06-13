@@ -8,7 +8,7 @@ function addCart(id) {
     })
     .then(response => response.json())
     .then(data => console.log(data))
-    .catch(error => req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`));
+    // .catch(error => req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`));
 }
 
 

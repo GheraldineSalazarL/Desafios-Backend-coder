@@ -2,6 +2,11 @@
 import CartsRepository from '../repository/carts.repository.js';
 import { transporter } from '../utils.js';
 import config from '../config/config.js'; 
+import { ResultNotFound, RolForbiden } from '../utils/customExceptions.js';
+import * as productsService from '../services/products.service.js'; 
+import jwt from 'jsonwebtoken';
+
+const PRIVATE_KEY = config.secret;
 
 const EMAILTO = config.emailTo;
 
@@ -15,6 +20,9 @@ export const saveCart = async () => {
 
 export const getCart = async(cid)=> {
     const result = await cartsRepository.getCart(cid);
+    if(result===null){
+        throw new ResultNotFound('cart not found');
+    }
     return result;
 };
 
@@ -45,7 +53,30 @@ export const deleteAllProductsToCart = async (cid) => {
 };
 
 export const saveProductToCartSession = async (pid, req, res) => {
-        const result = await cartsRepository.saveProductToCartSession(pid, req, res);
+        // const result = await cartsRepository.saveProductToCartSession(pid, req, res);
+
+        const token = req.cookies.token;
+        const decodedToken = jwt.verify(token, PRIVATE_KEY);
+        
+        let cart;
+        if (decodedToken.cart.length === 0) {
+            cart = await cartsRepository.saveCart();
+            decodedToken.cart = cart._id;
+            const updatedToken = generateToken(decodedToken);
+            res.cookie('token', updatedToken, { httpOnly: true })
+        } else {
+            cart = await cartsRepository.getCart(decodedToken.cart);
+        }
+
+        const product = await productsService.getProduct(pid); 
+
+        if(product.owner === decodedToken.email){
+            throw new RolForbiden('the owner cannot add his own products to the cartd');
+        }
+
+        const cid = cart._id;
+        const result = await cartsRepository.saveProductToCart(cid, pid);
+
         return result;
 };
 

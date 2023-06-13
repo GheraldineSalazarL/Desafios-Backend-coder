@@ -12,7 +12,7 @@ export default class CartsRouter extends Router{
         this.put('/:cid', ['PUBLIC'], updateCart); 
         this.put('/:cid/product/:pid', ['PUBLIC'], updateQuantityProductToCart); 
         this.delete('/:cid', ['PUBLIC'], deleteAllProductsToCart); 
-        this.post('/cart/add/:id', ['USER'], saveProductToCartSession); 
+        this.post('/cart/add/:id', ['USER', 'PREMIUM'], saveProductToCartSession); 
         this.post('/:cid/purchase', ['USER'], purchaseCart); 
     }
 }
