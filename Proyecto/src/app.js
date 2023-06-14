@@ -4,6 +4,9 @@ import {__dirname} from './utils.js';
 import { Server } from 'socket.io';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUiExpress from 'swagger-ui-express'
+
 import initializePassport from './config/passport.config.js';
 
 import Products from './dao/dbManagers/products.js';
@@ -29,6 +32,7 @@ import errorHandler from './middlewares/errors/index.js';
 
 import { addLogger } from "./logger.js";
 
+
 const usersRouter = new UsersRouter();
 const sessionRouter = new SessionRouter();
 const cartsRouter = new CartsRouter();
@@ -42,6 +46,21 @@ app.use(addLogger);
 app.engine('handlebars', handlebars.engine());
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'handlebars');
+
+console.log(__dirname)
+//Documentación API's
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'Documentación del proyecto de Tienda',
+            description: 'API pensada para resolver el proceso de ventas de productos de un tienda'
+        }
+    },
+    apis: [`${__dirname}/docs/**/*.yaml`]
+}
+const specs = swaggerJsdoc(swaggerOptions);
+app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));

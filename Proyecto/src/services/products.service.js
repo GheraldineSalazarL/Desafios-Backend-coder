@@ -20,7 +20,6 @@ export const getProductsPaginate = async (limit, page, sort, category, stock) =>
         : null;
 
     const res={
-        status: 'success',
         payload: products, 
         totalPages: result.totalPages,
         prevPage: result.prevPage,

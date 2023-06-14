@@ -15,7 +15,7 @@ const getProductsPaginate = async (req, res) => {
 
         const result = await productsService.getProductsPaginate(limit, page, sort, category, stock);
 
-        res.send({status: 'success', result});
+        res.status(200).send({result});
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch(error){
         res.status(500).send({error});
@@ -123,7 +123,7 @@ const updateProduct = async (req,res)=> {
         
     }catch(error){
         if(error instanceof ResultNotFound){
-            res.sendClientError('Carrito no encontrado')
+            res.sendClientError('Producto no encontrado')
         }
         if(error instanceof RolForbiden){
             res.sendClientError('User does not owner of product')

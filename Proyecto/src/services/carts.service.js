@@ -20,9 +20,6 @@ export const saveCart = async () => {
 
 export const getCart = async(cid)=> {
     const result = await cartsRepository.getCart(cid);
-    if(result===null){
-        throw new ResultNotFound('cart not found');
-    }
     return result;
 };
 

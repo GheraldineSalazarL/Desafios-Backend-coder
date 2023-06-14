@@ -1,0 +1,309 @@
+paths:
+  /api/products:
+    get: 
+      summary: Obtiene los productos paginados
+      tags: 
+        - Products
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: Límite de resultados por página
+          schema:
+            type: integer
+        - name: page
+          in: query
+          required: false
+          description: Resultados de la página ingresada
+          schema:
+            type: integer
+        - name: sort
+          in: query
+          required: false
+          description: Orden de los resultados por precio ascendente o descendente
+          schema:
+            type: integer
+            enum: [1, -1]
+        - name: category
+          in: query
+          required: false
+          description: Resultados filtrados por categoría
+          schema:
+            type: String
+        - name: stock
+          in: query
+          required: false
+          description: Resultados filtrados por cantidad de stock
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Los productos paginados fueron obtenidos satisfactoriamente de la base de datos
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#components/schemas/ProductsPaginate'
+        "500": 
+          description: Error interno del servidor, usualmente generado por una query defectusa o fallo de conexión a la BD
+    post: 
+      summary: Crear un producto 
+      tags: 
+        - Products
+      requestBody: 
+        required: true 
+        content: 
+            application/json:
+              schema: 
+                  $ref: '#components/requestBodies/createProduct' 
+      responses:
+        "200":
+          description: Producto creado
+        "400":
+          description: Una o mas propiedas estan incompletas o son inválidas
+        "500": 
+          description: Error interno del servidor, usualmente generado por una query defectusa o fallo de conexión a la BD
+  /api/products/{pid}:
+    get: 
+      summary: Obtiene un producto por su id
+      tags: 
+        - Products
+      parameters: 
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto
+          schema: 
+            $type: String
+      responses:
+        "200":
+          description: El producto fue obtenido satisfactoriamente de la base de datos
+          content: 
+            application/json:
+              schema: 
+                  $ref: '#components/schemas/Product'
+        "400": 
+          description: Producto no encontrado
+        "500": 
+          description: Error interno del servidor, usualmente generado por una query defectusa o fallo de conexión a la BD
+    put: 
+      summary: Actualiza un producto por su id
+      tags: 
+        - Products
+      parameters: 
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto
+          schema: 
+            $type: String
+      requestBody: 
+        required: true 
+        content: 
+            application/json:
+              schema: 
+                  $ref: '#components/requestBodies/updateProduct' 
+      responses:
+        "200":
+          description: Producto modificado
+        "400": 
+          description: Producto no encontrado
+        "500": 
+          description: Error interno del servidor, usualmente generado por una query defectusa o fallo de conexión a la BD
+    delete: 
+      summary: Elimina un producto por su id
+      tags: 
+        - Products
+      parameters: 
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto
+          schema: 
+            $type: String
+      responses:
+        "200":
+          description: Producto Eliminado
+        "400": 
+          description: Producto no encontrado
+        "500": 
+          description: Error interno del servidor, usualmente generado por una query defectusa o fallo de conexión a la BD
+components: 
+  schemas: 
+    ProductsPaginate: 
+      type: object
+      properties: 
+        payload: 
+          type: object
+          description: Rango de productos paginados
+        totalPages: 
+          type: Number
+          description: Cantidad de páginas
+        prevPage: 
+          type: Number
+          description: Número de página anterior
+        nextPage: 
+          type: Number
+          description: Número de página siguiente
+        page: 
+          type: Number
+          description: Número de página actual
+        hasPrevPage: 
+          type: boolean
+          description: Verdadero o falto si hay página anterior
+        hasNextPage: 
+          type: boolean
+          description: Verdadero o falto si hay página siguiente
+        prevLink: 
+          type: String
+          description: Link de página anterior
+        nextLink: 
+          type: String
+          description: Link de página siguiente
+      example: 
+        payload: 
+          _id: ObjectId("1293h1as0i34kaka0")
+          title: Closet
+          description: Closet doble de 4 metros
+          code: CL1
+          price: 300
+          status: true
+          stock: 8
+          category: Room
+          thumbnails: [foto1, foto2]
+          owner: gh.eeraldin@gmail.com}
+        totalPages: 3
+        prevPage: 1
+        nextPage: 3
+        page: 2
+        hasPrevPage: true
+        hasNextPage: true
+        prevLink: http://localhost:8080/api/products?limit=10&page=1
+        nextLink: http://localhost:8080/api/products?limit=10&page=2
+    Product: 
+      type: object
+      properties: 
+        _id:
+          type: ObjectId
+          description: Id autogenerado de MongoDb
+        title: 
+          type: String
+          description: Nombre del producto
+        description:
+          type: String
+          description: Descripción del producto
+        code: 
+          type: String
+          description: Código del producto
+        price:
+          type: String
+          description: Precio del producto
+        status: 
+          type: String
+          description: Estado del producto
+        stock:
+          type: Number
+          description: Cantidad de unidades en stock
+        category: 
+          type: String
+          description: Categoría a la que pertenece del producto
+        thumbnails:
+          type: Array
+          description: Fotos del producto
+        owner: 
+          type: String
+          description: Email del dueño del producto
+      example:
+        _id: ObjectId("1293h1as0i34kaka0")
+        title: Closet
+        description: Closet doble de 4 metros
+        code: CL1
+        price: 300
+        status: true
+        stock: 8
+        category: Room
+        thumbnails: [foto1, foto2]
+        owner: gh.eeraldin@gmail.com
+  requestBodies: 
+    updateProduct:
+      type: object
+      properties: 
+        title: 
+          type: String
+          description: Nombre del producto
+        description:
+          type: String
+          description: Descripción del producto
+        code: 
+          type: String
+          description: Código del producto
+        price:
+          type: String
+          description: Precio del producto
+        status: 
+          type: String
+          description: Estado del producto
+        stock:
+          type: Number
+          description: Cantidad de unidades en stock
+        category: 
+          type: String
+          description: Categoría a la que pertenece del producto
+        thumbnails:
+          type: Array
+          description: Fotos del producto
+        owner: 
+          type: String
+          description: Email del dueño del producto
+      example:
+        title: Closet
+        description: Closet doble de 4 metros
+        code: CL1
+        price: 300
+        status: true
+        stock: 8
+        category: Room
+        thumbnails: [foto1, foto2]
+        owner: gh.eeraldin@gmail.com
+    createProduct:
+      type: object
+      properties: 
+        title: 
+          type: String
+          description: Nombre del producto
+        description:
+          type: String
+          description: Descripción del producto
+        code: 
+          type: String
+          description: Código del producto
+        price:
+          type: String
+          description: Precio del producto
+        status: 
+          type: String
+          description: Estado del producto
+        stock:
+          type: Number
+          description: Cantidad de unidades en stock
+        category: 
+          type: String
+          description: Categoría a la que pertenece del producto
+        thumbnails:
+          type: Array
+          description: Fotos del producto
+      example:
+        title: Closet
+        description: Closet doble de 4 metros
+        code: CL1
+        price: 300
+        status: true
+        stock: 8
+        category: Room
+        thumbnails: [foto1, foto2]
+
+      
+
+        
+          

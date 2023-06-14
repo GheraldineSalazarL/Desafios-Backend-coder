@@ -1,0 +1,265 @@
+paths:
+  /api/carts:
+    post: 
+      summary: Crear un carrito 
+      tags: 
+        - Carts
+      responses:
+        "200":
+          description: Carrito creado
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#components/schemas/CartCreate'
+        "500": 
+          description: Error interno del servidor, usualmente generado por una query defectusa o fallo de conexión a la BD
+  /api/carts/{cid}:
+    get: 
+      summary: Obtiene un carrito por su id
+      tags: 
+        - Carts
+      parameters: 
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito
+          schema: 
+            $type: String
+      responses:
+        "200":
+          description: El carrito fue obtenido satisfactoriamente de la base de datos
+          content: 
+            application/json:
+              schema: 
+                  $ref: '#components/schemas/Cart'
+        "400": 
+          description: Carrito no encontrado
+        "500": 
+          description: Error interno del servidor, usualmente generado por una query defectusa o fallo de conexión a la BD
+    put: 
+      summary: Actualiza los productos de un carrito por su id
+      tags: 
+        - Carts
+      parameters: 
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito
+          schema: 
+            $type: String
+      requestBody: 
+        required: true 
+        content: 
+            application/json:
+              schema: 
+                  $ref: '#components/requestBodies/updateCart' 
+      responses:
+        "200":
+          description: Carrito modificado
+        "400": 
+          description: Carrito no encontrado
+        "500": 
+          description: Error interno del servidor, usualmente generado por una query defectusa o fallo de conexión a la BD
+    delete: 
+      summary: Elimina todos los productos de un carrito por su id
+      tags: 
+        - Carts
+      parameters: 
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito
+          schema: 
+            $type: String
+      responses:
+        "200":
+          description: Productos Eliminados del carrito
+        "400": 
+          description: Carrito no encontrado
+        "500": 
+          description: Error interno del servidor, usualmente generado por una query defectusa o fallo de conexión a la BD
+  /api/carts/{cid}/product/{pid}:
+    post: 
+      summary: Guarda un producto con un ID en un carrito con un ID
+      tags: 
+        - Carts
+      parameters: 
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito
+          schema: 
+            $type: String
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto
+          schema: 
+            $type: String
+      responses:
+        "200":
+          description: Producto agregado al carrito
+        "400":
+          description: Carrito no encontrado
+        "500": 
+          description: Error interno del servidor, usualmente generado por una query defectusa o fallo de conexión a la BD
+    delete: 
+      summary: Elimina un producto con un ID de un carrito con un ID
+      tags: 
+        - Carts
+      parameters: 
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito
+          schema: 
+            $type: String
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto
+          schema: 
+            $type: String
+      responses:
+        "200":
+          description: Producto eliminado del carrito
+        "400": 
+          description: Error por producto no encontrado dentro del carrito o carrito no encontrado
+          content: 
+            application/json:
+              schema: 
+                  oneOf: 
+                    - $ref: '#components/responsesBodies/CartNotFound'
+                    - $ref: '#components/responsesBodies/ProductNotFoundInCart'
+        "500": 
+          description: Error interno del servidor, usualmente generado por una query defectusa o fallo de conexión a la BD
+    put: 
+      summary: Actualiza la cantidad de un producto con ID de un carrito con ID
+      tags: 
+        - Carts
+      parameters: 
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito
+          schema: 
+            $type: String
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto
+          schema: 
+            $type: String
+      requestBody: 
+        required: true 
+        content: 
+            application/json:
+              schema: 
+                  $ref: '#components/requestBodies/updateQuantityCart' 
+      responses:
+        "200":
+          description: Carrito modificado
+        "400": 
+          description: Error por producto no encontrado dentro del carrito o carrito no encontrado
+          content: 
+            application/json:
+              schema: 
+                  oneOf: 
+                    - $ref: '#components/responsesBodies/CartNotFound'
+                    - $ref: '#components/responsesBodies/ProductNotFoundInCart'
+        "500": 
+          description: Error interno del servidor, usualmente generado por una query defectusa o fallo de conexión a la BD
+components: 
+  schemas: 
+    CartCreate: 
+      type: object
+      properties:  
+        status: 
+          type: String
+          description: Estado de respuesta
+        message: 
+          type: String
+          description: Mensaje de la respuesta
+        payload: 
+          type: object
+          description: Mensaje de la respuesta
+      example: 
+        status: success
+        message: "Carrito creado"
+        payload: 
+          _id: ObjectId("1293h1as0i34kaka0")
+          products: []
+    Cart: 
+      type: object
+      properties:  
+        _id:
+          type: ObjectId
+          description: Id del carrito autogenerado de MongoDb
+        products: 
+          type: object
+          description: Productos agregados al carrito
+      example: 
+        _id: ObjectId("1293h1as0i34kaka0")
+        products:
+          _id: ObjectId("1293h1as0i34kaka0")
+          title: Closet
+          description: Closet doble de 4 metros
+          code: CL1
+          price: 300
+          status: true
+          stock: 8
+          category: Room
+          thumbnails: [foto1, foto2]
+          owner: gh.eeraldin@gmail.com
+  responsesBodies:
+    CartNotFound: 
+      type: object
+      properties:
+        status:
+          type: String
+          desciption: Estado de la petición 
+        message:
+          type: String
+          desciption: Mensaje de la petición 
+      example: 
+        status: error
+        message: Carrito no encontrado
+    ProductNotFoundInCart: 
+      type: object
+      properties:
+        status:
+          type: String
+          desciption: Estado de la petición 
+        message:
+          type: String
+          desciption: Mensaje de la petición 
+      example: 
+        status: error
+        message: Producto no encontrado dentro del carrito
+  requestBodies: 
+    updateCart:
+      type: object
+      properties: 
+        product:
+          type: String 
+          description: El ID del producto a modificar
+        quantity: 
+          type: Number
+          description: Cantidad de  unidades del producto 
+      example:
+        product: 641fa36818c1c3f3d7f9e803
+        quantity: 4
+    updateQuantityCart:
+      type: object
+      properties: 
+        quantity: 
+          type: Number
+          description: Cantidad de  unidades del producto a modificar dentro del carrito
+      example:
+        quantity: 4
+
+
+
+            
