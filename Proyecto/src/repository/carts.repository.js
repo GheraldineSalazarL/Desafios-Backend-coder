@@ -2,7 +2,6 @@ import Carts from '../dao/dbManagers/carts.js';
 import Products from '../dao/dbManagers/products.js';
 import jwt from 'jsonwebtoken';
 import config from '../config/config.js';
-import { generateToken } from '../utils.js';
 import Tickets from '../dao/dbManagers/purchase.js';
 import uniqid from 'uniqid';
 import { ResultNotFound } from '../utils/customExceptions.js';

@@ -5,6 +5,7 @@ import config from '../config/config.js';
 import { ResultNotFound, RolForbiden } from '../utils/customExceptions.js';
 import * as productsService from '../services/products.service.js'; 
 import jwt from 'jsonwebtoken';
+import { generateToken } from '../utils.js';
 
 const PRIVATE_KEY = config.secret;
 
