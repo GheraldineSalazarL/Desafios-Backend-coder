@@ -10,6 +10,8 @@ const roleChange = async (req, res) => {
 
         const user= await sessionsService.getById(uid);
 
+        if(user.rol==='ADMIN') return res.status(400).send({error});
+
         let rol = user.rol==='USER' ? 'PREMIUM' : 'USER'
 
         const result = await sessionsService.updateUserRol(uid, rol);

@@ -1,0 +1,32 @@
+<div>
+  <h1>Lista de usuarios</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Rol</th>
+        <th>ID</th>
+        <th>Cambio de rol</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each users}}
+      <tr>
+        <td>{{first_name}}</td>
+        <td>{{email}}</td>
+        <td>{{rol}}</td>
+        <td>{{_id}}</td>
+        <td>
+          <label class="switch">
+            <input type="checkbox" onchange="changeUserRole('{{_id}}', this.checked)">
+            <span class="slider"></span>
+          </label>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+<script src='/js/users.js'></script>
+

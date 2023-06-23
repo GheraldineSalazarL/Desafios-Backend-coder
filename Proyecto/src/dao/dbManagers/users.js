@@ -43,4 +43,9 @@ export default class UsersManager {
         const result = await userModel.updateOne({ _id: uid }, { rol: rol});
         return result;
     }
+
+    getUsers = async (uid, rol) => {
+        const users = await userModel.find();
+        return users.map(user => user.toObject());
+    }
 }

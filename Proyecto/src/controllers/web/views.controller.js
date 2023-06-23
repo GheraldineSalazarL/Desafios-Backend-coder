@@ -115,6 +115,18 @@ const resetPassword = (req, res) => {
     res.render('resetPassword', { style: 'login.css' });
 };
 
+const usersView = async (req, res) => {
+    try {
+        const users = await viewsService.getUsers(); 
+
+        res.render('users', {users, style: 'users.css'});
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
+    } catch (error) {
+        res.status(500).send({error});
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
+    }
+};
+
 export { 
     publicAccess, 
     privateAccess, 
@@ -129,5 +141,6 @@ export {
     login, 
     profile, 
     forgotPassword,
-    resetPassword
+    resetPassword,
+    usersView
 }
