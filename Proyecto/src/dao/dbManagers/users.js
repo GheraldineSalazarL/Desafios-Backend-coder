@@ -48,4 +48,22 @@ export default class UsersManager {
         const users = await userModel.find();
         return users.map(user => user.toObject());
     }
+
+    saveDocuments = async (uid, documents) => {
+        const userUploaderDocuments = await userModel.findByIdAndUpdate(
+            uid,
+            {
+              $push: {
+                documents: documents
+              }
+            },
+            { new: true } 
+          );
+        return userUploaderDocuments;
+    }
+
+    updateLastConnection = async (email) => {
+        const result = await userModel.updateOne({ email: email }, { last_connection: new Date()});
+        return result;
+    }
 }

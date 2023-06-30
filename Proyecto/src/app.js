@@ -47,7 +47,6 @@ app.engine('handlebars', handlebars.engine());
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'handlebars');
 
-console.log(__dirname)
 //Documentación API's
 const swaggerOptions = {
     definition: {

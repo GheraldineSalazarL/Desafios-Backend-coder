@@ -66,5 +66,15 @@ export default class SessionsRepository {
         const updateUserRol = await usersManager.updateUserRol(uid, rol);
         return updateUserRol; 
     }
+
+    saveDocuments = async (uid, documents) => {
+        const uploaderDocuments = await usersManager.saveDocuments(uid, documents);
+        return uploaderDocuments; 
+    }
+
+    updateLastConnection = async (email) => {
+        const updateLastConnection = await usersManager.updateLastConnection(email);
+        return updateLastConnection; 
+    }
 }
 

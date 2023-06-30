@@ -32,7 +32,12 @@ const usersSchema = new mongoose.Schema({
       type: String,
       require: true,
       default: 'user',
-    }
+    },
+    documents: [{
+      name: String,
+      reference: String
+    }],
+    last_connection: Date
   });
 // const userModel = mongoose.model(userCollection, usersSchema);
 

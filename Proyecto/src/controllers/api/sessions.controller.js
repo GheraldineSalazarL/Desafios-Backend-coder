@@ -83,6 +83,9 @@ const login = async (req, res) => {
         const result = await sessionsService.login(user, password);
 
         res.cookie('token', result, { httpOnly: true });
+
+        await sessionsService.updateLastConnection(user.email);
+
         res.sendSuccess({result}); 
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
 
@@ -103,6 +106,7 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
     try{
+        await sessionsService.updateLastConnection(req.session.user.email);
         res.clearCookie('token');
         req.session.destroy(err => {
         if (err) return res.status(500).send({ status: 'error', error: 'couldnt logout' });

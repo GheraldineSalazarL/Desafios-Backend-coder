@@ -165,4 +165,14 @@ export const getById = async (uid) =>{
 export const updateUserRol = async (uid, rol) => {
     const updateUserRol = await sessionsRepository.updateUserRol(uid, rol);
     return updateUserRol;
+}; 
+
+export const saveDocuments = async (uid, documents) => {
+    const uploaderDocuments =  await sessionsRepository.saveDocuments(uid, documents);
+    return uploaderDocuments;
+}
+
+export const updateLastConnection = async (email) => {
+    const updateLastConnection =  await sessionsRepository.updateLastConnection(email);
+    return updateLastConnection;
 }

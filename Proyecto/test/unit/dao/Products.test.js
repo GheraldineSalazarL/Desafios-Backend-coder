@@ -112,3 +112,25 @@ describe('Probando nuestro dao de productos', () => {
         expect(products).to.be.deep.equal([]);
     })
 })
+
+// import mockingoose from 'mockingoose'; 
+// import Products from '../../../src/dao/dbManagers/products.js';
+// import { productsModel } from '../../../src/dao/models/products.js';
+
+// describe('CARTS DAO', () => {
+//     it('Debería retornar el listado de carritos', async () =>{
+//         const productsDao = new Products();
+//         mockingoose(productsModel).toReturn({
+//             title: 'Prueba',
+//             description: 'test mockingoose',
+//             code: 'P1',
+//             price: '50',
+//             stock: 5,
+//             category: 'Pruebas'
+//         }, 'find'); 
+
+//         const result = await productsDao.getAll(); 
+//         console.log(result);
+//         expect(Array.isArray(result)).to.be.eqls(true);
+//     })
+// })
