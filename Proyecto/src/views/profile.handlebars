@@ -1,8 +1,134 @@
-<div>
-    <h1>Tu perfil (sin datos sensibles)</h1>
-    <p>Nombre: {{user.name}}</p>
-    <p>Email: {{user.email}}</p>
-    <p>Edad: {{user.age}}</p>
-    <p>Rol: {{user.rol}}</p>
-    <a href="/api/sessions/logout"><button>Salir</button></a>
+<div class="container">
+    <header>
+        <div class="container-header">
+            <a href="/products" class="header-logo">
+                <i class="fas fa-shopping-bag"></i>
+                <h1> Tu Tienda </h1>
+            </a>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="header-menu">
+                <ul class="menu">
+                    {{#if admin}}
+                    <li>
+                        <a href="#">Administración</a>
+                        <ul class="submenu">
+                            <li><a href="/users">Usuarios</a></li>
+                            <li><a href="/realtimeproducts">Productos</a></li>
+                        </ul>
+                    </li>
+                    {{/if}}
+                    {{#if premium}}
+                    <li>
+                        <a href="#">Administración</a>
+                        <ul class="submenu">
+                            <li><a href="/realtimeproducts">Productos</a></li>
+                        </ul>
+                    </li>
+                    {{/if}}
+                    <li><a href="/products">Productos</a></li>
+                    {{#if us}}
+                    <li><a href="/chat">Chat</a></li>
+                    {{/if}}
+                    {{#if user}}
+                    <li>
+                        <a href="#"><i class="fas fa-user"></i></a>
+                        <ul class="submenu">
+                            <li><a href="/profile">Perfil</a></li>
+                            <li><a href="/api/sessions/logout">Salir</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/cart"><i class="fas fa-shopping-cart"></i></a></li>
+                    {{/if}}                    
+                </ul>
+            </div>
+        </div>
+        <hr>
+    </header>
+
+    <section class="container-profile">
+        <div class="profile-card">
+            <div class="profile-info">
+                <i class="fas fa-user-circle"></i>
+                <div class="profile-details">
+                    <p><strong>Nombre:</strong> {{user.name}}</p>
+                    <p><strong>Email:</strong> {{user.email}}</p>
+                    <p><strong>Edad:</strong> {{user.age}}</p>
+                    <p><strong>Rol:</strong> {{user.rol}}</p>
+                </div>
+            </div>
+            <hr>
+            {{#unless admin}}
+            <div class="profile-documents">
+                <p><strong>Documentos:</strong></p>
+                <div class="doc">
+                    <label>Comprobante de estado de cuenta</label>
+                    {{#if doc1}}
+                    <label class="file-label-ok">
+                        <i class="fas fa-file"></i>
+                        <span>Archivo subido</span>
+                    </label>
+                    {{else}}
+                    <form class="uploadForm" id="uploadForm1" enctype="multipart/form-data" data-input="doc1">
+                        <label for="fileInput" class="file-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Seleccionar archivo</span>
+                        </label>
+                        <input class="fileInput" value="document" type="file" name="document" id="fileInput" accept=".pdf, .jpg, .png, .docx">
+                        <input type="hidden" name="filename" value="ComprobanteEstadoCuenta">
+                        
+                    </form>
+                    {{/if}}
+                </div>
+
+                <div class="doc">
+                    <label>Comprobante de domicilio</label>
+                    {{#if doc2}}
+                    <label class="file-label-ok">
+                        <i class="fas fa-file"></i>
+                        <span>Archivo subido</span>
+                    </label>
+                    {{else}}
+                    <form class="uploadForm" id="uploadForm2" enctype="multipart/form-data" data-input="doc2">
+                        <label for="fileInput" class="file-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Seleccionar archivo</span>
+                        </label>
+                        <input class="fileInput" value="document" type="file" name="document" id="fileInput" accept=".pdf, .jpg, .png, .docx">
+                        <input type="hidden" name="filename" value="ComprobanteDomicilio">
+                        
+                    </form>
+                    {{/if}}
+                </div>
+
+                <div class="doc">
+                    <label>Identificación</label>
+                    {{#if doc3}}
+                    <label class="file-label-ok">
+                        <i class="fas fa-file"></i>
+                        <span>Archivo subido</span>
+                    </label>
+                    {{else}}
+                    <form class="uploadForm" id="uploadForm3" enctype="multipart/form-data" data-input="doc3">
+                        <label for="fileInput" class="file-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Seleccionar archivo</span>
+                        </label>
+                        <input class="fileInput" value="document" type="file" name="document" id="fileInput" accept=".pdf, .jpg, .png, .docx">
+                        <input type="hidden" name="filename" value="Identificacion">
+                        
+                    </form>
+                    {{/if}}
+                </div>
+            </div>
+            {{/unless}}
+            <a href="/api/sessions/logout"> <button class="btn"> Cerrar sesión </button> </a>
+        </div>
+        <div id="user-data" data-user="{{uid}}"></div>
+    </section>
 </div>
+
+<script src="https://kit.fontawesome.com/e9d32d96ee.js" crossorigin="anonymous"></script>
+<script src="/js/profile.js"></script>

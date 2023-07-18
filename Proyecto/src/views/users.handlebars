@@ -1,32 +1,92 @@
 <div>
-  <h1>Lista de usuarios</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Email</th>
-        <th>Rol</th>
-        <th>ID</th>
-        <th>Cambio de rol</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each users}}
-      <tr>
-        <td>{{first_name}}</td>
-        <td>{{email}}</td>
-        <td>{{rol}}</td>
-        <td>{{_id}}</td>
-        <td>
-          <label class="switch">
-            <input type="checkbox" onchange="changeUserRole('{{_id}}', this.checked)">
-            <span class="slider"></span>
-          </label>
-        </td>
-      </tr>
-      {{/each}}
-    </tbody>
-  </table>
-</div>
-<script src='/js/users.js'></script>
+  <header>
+    <div class="container-header">
+      <a href="/products" class="header-logo">
+        <i class="fas fa-shopping-bag"></i>
+        <h1> Tu Tienda </h1>
+      </a>
+      <div class="search-bar">
+        <input type="text" placeholder="Buscar...">
+        <button type="submit"><i class="fas fa-search"></i></button>
+      </div>
+      <div class="header-menu">
+        <ul class="menu">
+          {{#if admin}}
+          <li>
+            <a href="#">Administración</a>
+            <ul class="submenu">
+              <li><a href="/users">Usuarios</a></li>
+              <li><a href="/realtimeproducts">Productos</a></li>
+            </ul>
+          </li>
+          {{/if}}
+          {{#if premium}}
+          <li>
+            <a href="#">Administración</a>
+            <ul class="submenu">
+              <li><a href="/realtimeproducts">Productos</a></li>
+            </ul>
+          </li>
+          {{/if}}
+          <li><a href="/products">Productos</a></li>
+          {{#if us}}
+          <li><a href="/chat">Chat</a></li>
+          {{/if}}
+          {{#if user}}
+          <li>
+            <a href="#"><i class="fas fa-user"></i></a>
+            <ul class="submenu">
+              <li><a href="/profile">Perfil</a></li>
+              <li><a href="/api/sessions/logout">Salir</a></li>
+            </ul>
+          </li>
+          <li><a href="/cart"><i class="fas fa-shopping-cart"></i></a></li>
+          {{/if}}          
+        </ul>
+      </div>
+    </div>
+    <hr>
+  </header>
 
+  <section class="users">
+    <h2>Lista de usuarios</h2>
+    <table>
+      <thead>
+        <tr>
+          <th> <i class="fas fa-user"></i> Nombre</th>
+          <th> <i class="far fa-envelope"></i> Email</th>
+          <th> <i class="fas fa-user-tag"></i> Rol</th>
+          <th> <i class="far fa-id-card"></i> ID</th>
+          <th> <i class="fas fa-exchange-alt"></i> Cambio de rol</th>
+          <th> <i class="fas fa-trash-alt"></i> Eliminar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each users}}
+        <tr>
+          <td>{{first_name}}</td>
+          <td>{{email}}</td>
+          <td>{{rol}}</td>
+          <td>{{_id}}</td>
+          <td>
+            <label class="switch">
+              <input type="checkbox" onchange="changeUserRole('{{_id}}', this.checked)">
+              <span class="slider"></span>
+            </label>
+          </td>
+          <td>
+            <a class="delete" onclick="deleteUser('{{_id}}')">
+              <i class="fas fa-trash-alt"></i>
+            </a>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+<script src='/js/users.js'></script>
+<script src="https://kit.fontawesome.com/e9d32d96ee.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

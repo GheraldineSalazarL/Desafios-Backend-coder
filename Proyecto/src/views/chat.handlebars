@@ -1,16 +1,67 @@
 <div class="container">
+    <header>
+        <div class="container-header">
+            <a href="/products" class="header-logo">
+                <i class="fas fa-shopping-bag"></i>
+                <h1> Tu Tienda </h1>
+            </a>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="header-menu">
+                <ul class="menu">
+                    {{#if admin}}
+                    <li>
+                        <a href="#">Administración</a>
+                        <ul class="submenu">
+                            <li><a href="/users">Usuarios</a></li>
+                            <li><a href="/realtimeproducts">Productos</a></li>
+                            <li><a href="#">Carritos</a></li>
+                        </ul>
+                    </li>
+                    {{/if}}
+                    {{#if premium}}
+                    <li>
+                        <a href="#">Administración</a>
+                        <ul class="submenu">
+                            <li><a href="/realtimeproducts">Productos</a></li>
+                        </ul>
+                    </li>
+                    {{/if}}
+                    <li><a href="/products">Productos</a></li>
+                    {{#if us}}
+                    <li><a href="/chat">Chat</a></li>
+                    {{/if}}
+                    {{#if user}}
+                    <li>
+                        <a href="#"><i class="fas fa-user"></i></a>
+                        <ul class="submenu">
+                            <li><a href="/profile">Perfil</a></li>
+                            <li><a href="/api/sessions/logout">Salir</a></li>
+                        </ul>
+                    </li>
+                    {{/if}}
+                    <li><a href="/cart"><i class="fas fa-shopping-cart"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
     <div class="welcome">
         <h1>Bienvenidos al chat</h1>
-        <input id="chatBox" placeholder="What's Up?">
-    </div>
-    <br>
-    <hr>
-    <br>
-    <div class="chat">
-        <p id="messageLogs"></p>
+        <div id="userEmail-data" data-userEmail="{{user.email}}"></div>
+        <div class="input-container">
+            <input type="text" id="chatBox" class="chat-input" placeholder="Escribe tu mensaje y presiona enter.">
+        </div>
+
+        <div class="chat">
+            <div id="messageLogs" class="chat-container"></div>
+        </div>
     </div>
 </div>
 
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/chat.js"></script>
+<script src="https://kit.fontawesome.com/e9d32d96ee.js" crossorigin="anonymous"></script>

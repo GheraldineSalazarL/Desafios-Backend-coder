@@ -1,0 +1,261 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f6f9;
+  padding: 0px;
+  margin: 0px;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 30px 50px 20px 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header {
+  background-color: #f4f6f9;
+}
+
+.header-logo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-decoration: none;
+  color: #0070E0;
+}
+
+.header-logo i {
+  font-size: 35px;
+  margin-right: 20px;
+}
+
+h1 {
+  font-size: 25px;
+  margin: 0px;
+}
+
+ul.menu {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+}
+
+ul.menu li {
+  display: inline-block;
+  position: relative;
+}
+
+ul.menu li a {
+  display: block;
+  margin: 10px 30px 10px 30px;
+  text-decoration: none;
+  color: #2c3e5c;
+}
+
+ul.submenu {
+  display: none;
+  position: absolute;
+  left: 0;
+  background-color: #f9f9f9;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  padding: 0px;
+}
+
+ul.submenu li {
+  display: block;
+  margin: 10px 0px 10px 0px;
+  padding: 0px;
+  text-align: center;
+}
+
+ul.submenu li a {
+  display: block;
+  margin: 0px;
+  padding: 0px;
+}
+
+ul.menu li:hover ul.submenu {
+  display: block;
+}
+
+ul.menu li a:hover {
+  color: #E07000;
+}
+
+ul.submenu li a:hover {
+  color: #E07000;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 25%;
+
+}
+
+.search-bar input[type="text"] {
+  flex: 1;
+  border: none;
+  background-color: transparent;
+  font-size: 16px;
+  outline: none;
+}
+
+.search-bar button[type="submit"] {
+  background-color: transparent;
+  color: #0070E0;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  font-size: 18px;
+}
+
+.search-bar button:hover {
+  color: #E07000;
+}
+
+.filters {
+  background-color: #f4f6f9;
+  margin-bottom: 10px;
+  padding: 0px 50px 0px 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.filters .form-group {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.filters .form-group label {
+  margin-bottom: 5px;
+}
+
+.filters .form-group select {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.filters .form-group input {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 50px;
+}
+
+.products {
+  padding: 0px 50px 0px 50px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.product-container {
+  background-color: #fff;
+  margin: 10px;
+  border-radius: 10px;
+  width: 290px;
+  padding-bottom: 10px;
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.2);
+
+}
+
+.product-container img {
+  width: 100%;
+  border-radius: 10px 10px 0px 0px;
+}
+
+.product-container .info-product {
+  padding: 0px 10px 0px 10px;
+}
+
+.product-container .info-product h4 {
+  padding: 0px;
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+
+.product-container .info-product h5 {
+  padding: 0px;
+  margin-top: 0px;
+}
+
+.product-container .info-product p {
+  padding: 0px;
+  margin-bottom: 0px;
+  color: #2c3e5c;
+}
+
+.product-container .info-product .add {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.product-container .info-product .add input {
+  width: 30px;
+  padding: 5px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.product-container .info-product .add .icon {
+  font-size: 20px;
+  color: #0070E0;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  background-color: transparent;
+}
+
+.product-container .info-product .add .icon :hover {
+  color: #E07000;
+}
+
+.controllers {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: baseline;
+  padding: 50px;
+}
+
+.controllers p {
+  margin: 0px 40px 0px 40px;
+  color: #7c838f;
+  font-size: 18px;
+}
+
+.controllers a {
+  text-decoration: none;
+  color: #0070E0;
+  align-items: center;
+  cursor: pointer;
+}
+
+.controllers a:hover {
+  color: #E07000;
+}
+
+footer {
+  background-color: #16325c;
+  padding: 20px;
+  color: #fff;
+  text-align: center;
+}

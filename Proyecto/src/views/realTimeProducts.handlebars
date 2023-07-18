@@ -1,24 +1,77 @@
-
-
 <div class="container">
-    <h1>Lista de Productos en Tiempo Real</h1>
-
-    <div class="formu">
-        <h3>Crear nuevo producto</h3>
-        <div class="inputs">
-            <input id="title" class="title" type="text" placeholder="Nombre">
-            <input id="code" type="text" placeholder="Código">
-            <input id="price" type="text" placeholder="Precio">
-            <input id="stock" type="text" placeholder="Stock">
-            <input id="category" type="text" placeholder="Categoría">
-            <input id="thumbnails" type="text" placeholder="thumbnails (URL)">
-            <input class="texarea" id="description" type="text" placeholder="Descipción">
+    <header>
+        <div class="container-header">
+            <a href="/products" class="header-logo">
+                <i class="fas fa-shopping-bag"></i>
+                <h1> Tu Tienda </h1>
+            </a>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="header-menu">
+                <ul class="menu">
+                    {{#if admin}}
+                    <li>
+                        <a href="#">Administración</a>
+                        <ul class="submenu">
+                            <li><a href="/users">Usuarios</a></li>
+                            <li><a href="/realtimeproducts">Productos</a></li>
+                        </ul>
+                    </li>
+                    {{/if}}
+                    {{#if premium}}
+                    <li>
+                        <a href="#">Administración</a>
+                        <ul class="submenu">
+                            <li><a href="/realtimeproducts">Productos</a></li>
+                        </ul>
+                    </li>
+                    {{/if}}
+                    <li><a href="/products">Productos</a></li>
+                    {{#if us}}
+                    <li><a href="/chat">Chat</a></li>
+                    {{/if}}
+                    {{#if user}}
+                    <li>
+                        <a href="#"><i class="fas fa-user"></i></a>
+                        <ul class="submenu">
+                            <li><a href="/profile">Perfil</a></li>
+                            <li><a href="/api/sessions/logout">Salir</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/cart"><i class="fas fa-shopping-cart"></i></a></li>
+                    {{/if}}
+                </ul>
+            </div>
         </div>
-        <button class="btn-create" id="button" type="submit">Crear</button>
-    </div>
+        <hr>
+    </header>
 
-    <div id="products-container" class="products-container">
-    </div>
+    <section class="container-realTime"> 
+        {{#if premium}}
+        <h1>Lista de Mis Productos</h1>
+        {{/if}}
+
+        <div class="formu">
+            <h3>Crear nuevo producto</h3>
+            <div class="inputs">
+                <input id="title" class="title" type="text" placeholder="Nombre">
+                <input id="code" type="text" placeholder="Código">
+                <input id="price" type="text" placeholder="Precio">
+                <input id="stock" type="text" placeholder="Stock">
+                <input id="category" type="text" placeholder="Categoría">
+                <input id="thumbnails" type="text" placeholder="thumbnails (URL)">
+                <input class="texarea" id="description" type="text" placeholder="Descipción">
+            </div>
+            <button class="btn-create" id="button" type="submit">Crear</button>
+        </div>
+
+        <div id="products-container" class="products-container">
+        </div>
+        <div id="userRol-data" data-userRol="{{user.rol}}"></div>
+        <div id="userEmail-data" data-userEmail="{{user.email}}"></div>
+    </section>
 
 </div>
 
@@ -26,3 +79,4 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/realTimeProducts.js"></script>
 <script src="https://kit.fontawesome.com/e9d32d96ee.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

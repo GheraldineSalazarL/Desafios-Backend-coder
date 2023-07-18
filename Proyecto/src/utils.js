@@ -15,10 +15,6 @@ const PORT = config.port;
 const USER = config.user;
 const PASS = config.pass;
 
-
-const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10)); 
-const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password); 
-
 const hashData = async (password) => {
     return bcrypt.hash(password,10); 
 }
@@ -30,6 +26,13 @@ const compareHashedData = async (password, passwordDB) => {
 const generateToken = (usuario) => {
     return jwt.sign(usuario, PRIVATE_KEY); 
 }
+
+
+
+const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10)); 
+const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password); 
+
+
 
 //configuración SMTP gmail 
 const transporter = nodemailer.createTransport({

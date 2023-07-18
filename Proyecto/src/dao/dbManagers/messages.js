@@ -10,5 +10,5 @@ export default class Chat {
         const result = await chatModel.create(message);
         return result;
     }
-    
+
 }

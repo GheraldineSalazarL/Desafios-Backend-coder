@@ -33,6 +33,10 @@ const usersSchema = new mongoose.Schema({
       require: true,
       default: 'user',
     },
+    cart: {
+      type: String,
+      default: ''
+    },
     documents: [{
       name: String,
       reference: String

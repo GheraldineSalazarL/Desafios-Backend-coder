@@ -1,11 +1,17 @@
 // import Carts from '../dao/dbManagers/carts.js' 
+import crypto from 'crypto';
 import CartsRepository from '../repository/carts.repository.js';
 import { transporter } from '../utils.js';
-import config from '../config/config.js'; 
+import config from '../config/config.js';
 import { ResultNotFound, RolForbiden } from '../utils/customExceptions.js';
-import * as productsService from '../services/products.service.js'; 
+import * as productsService from '../services/products.service.js';
 import jwt from 'jsonwebtoken';
 import { generateToken } from '../utils.js';
+import * as sessionsService from '../services/sessions.service.js';
+import Tickets from '../dao/dbManagers/purchase.js';
+import uniqid from 'uniqid';
+import { successfulPurchase } from '../utils/customHTML.js';
+import { sendEmail } from './mail.service.js';
 
 const PRIVATE_KEY = config.secret;
 
@@ -13,57 +19,72 @@ const EMAILTO = config.emailTo;
 
 // const cartsManager = new Carts();
 const cartsRepository = new CartsRepository();
+const ticketsManager = new Tickets();
 
 export const saveCart = async () => {
     const result = await cartsRepository.saveCart();
     return result;
 };
 
-export const getCart = async(cid)=> {
+export const getCart = async (cid) => {
     const result = await cartsRepository.getCart(cid);
+    if(result===null){
+        throw new ResultNotFound('cart not found');
+    }
     return result;
 };
 
 export const saveProductToCart = async (cid, pid) => {
-    const result = await cartsRepository.saveProductToCart(cid, pid);
+    const quantity  = 1;
+    const result = await cartsRepository.saveProductToCart(cid, pid, quantity);
     return result;
-    // await manager.saveId(cid, pid);
 };
 
 export const deleteProductToCart = async (cid, pid) => {
-    const result = await cartsRepository.deleteProductToCart(cid, pid);
-    return result;       
+    const cart = await cartsRepository.getCart(cid);
+    if(cart===null){
+        throw new ResultNotFound('cart not found');
+    }
+    const product = await productsService.getProduct(pid); 
+
+    const productsCart = cart.products;
+    const indexProd = productsCart.findIndex(prod => prod.product._id == pid);
+
+    let result;
+    if(indexProd > -1){
+        result = await cartsRepository.deleteProductToCart(cid, pid);
+    } else{ 
+        throw new ResultNotFound('The product does not exist in the cart');
+    }
+
+    return result;
 };
 
-export const updateCart = async(cid, productsUpdate)=> {
+export const updateCart = async (cid, productsUpdate) => {
     const result = await cartsRepository.updateCart(cid, productsUpdate);
     return result;
 };
 
 export const updateQuantityProductToCart = async (cid, pid, quantityUpdate) => {
     const result = await cartsRepository.updateQuantityProductToCart(cid, pid, quantityUpdate);
-    return result;    
+    return result;
 };
 
 export const deleteAllProductsToCart = async (cid) => {
     const result = await cartsRepository.deleteAllProductsToCart(cid);
     return result;
 };
-
-export const saveProductToCartSession = async (pid, req, res) => {
-        // const result = await cartsRepository.saveProductToCartSession(pid, req, res);
-
-        const token = req.cookies.token;
+export const saveProductToCartSession = async (pid, token, quantity) => {
         const decodedToken = jwt.verify(token, PRIVATE_KEY);
-        
+
         let cart;
-        if (decodedToken.cart.length === 0) {
+        const user = await sessionsService.getByEmail(decodedToken.email)
+
+        if (user.cart === '') {
             cart = await cartsRepository.saveCart();
-            decodedToken.cart = cart._id;
-            const updatedToken = generateToken(decodedToken);
-            res.cookie('token', updatedToken, { httpOnly: true })
+            await sessionsService.updateCart(decodedToken.email, cart._id)
         } else {
-            cart = await cartsRepository.getCart(decodedToken.cart);
+            cart = await cartsRepository.getCart(user.cart);
         }
 
         const product = await productsService.getProduct(pid); 
@@ -73,30 +94,66 @@ export const saveProductToCartSession = async (pid, req, res) => {
         }
 
         const cid = cart._id;
-        const result = await cartsRepository.saveProductToCart(cid, pid);
+
+        await cartsService.getCart(cid);
+
+        const result = await cartsRepository.saveProductToCart(cid, pid, quantity);
 
         return result;
 };
 
-export const purchaseCart = async (cid, req) => {
-    const result = await cartsRepository.purchaseCart(cid, req);
+export const purchaseCart = async (cart, user) => {
+        console.log(cart)
+        const productsPurchase = [];
+        const ProductsCanceled = [];
 
-    const productsPurchased = result.productsPurchased.map(item => item.product.title);
-    const productsUnpurchased = result.productsUnpurchased.map(item => item.product.title);
+        for (const item of cart.products) {
+            const product = await productsService.getProduct(item.product);
+      
+            if (product.stock >= item.quantity) {
+                const price = product.price;
+                productsPurchase.push({...item, price});
+                product.stock -= item.quantity;
+                await productsService.updateProduct({"stock": product.stock}, product._id);
+            } else {
+                ProductsCanceled.push(item)
+            }
+        }
 
-    await transporter.sendMail({
-        from: 'Compra Realizada <compras@compras.com>',
-        to: `${EMAILTO}`,
-        subject: 'Tu compra ha sido realizada',
-        html: `<div> <h1> Compra exitosa </h1>  
-                    <p>Productos comprados: ${productsPurchased}</p>
-                    <p>TOTAL: ${result.total}</p>
-                    <p></p>
-                    <p>Productos que no compraste por falta de stock: ${productsUnpurchased}</p>
-                    <p></p>
-                    <h4>Gracias por tu compra</h4>
-                </div>`
-    });
+        let total = 0;
+        for (const product of productsPurchase) {
+            const subtotal = product.price * product.quantity; 
+            total += subtotal;
+        }
 
-    return result;
+        await cartsRepository.updateCart(cart._id, ProductsCanceled);
+        
+        const code = uniqid();
+        const purchaseDatetime = new Date();
+        
+        const ticket = {
+            code: code,
+            date: purchaseDatetime,
+            amount: total, 
+            purchaser: user.email
+        }
+        await ticketsManager.save(ticket);
+
+        const ticketResult = {
+            productsPurchased: productsPurchase,
+            total: total,
+            productsUnpurchased: ProductsCanceled,
+        }
+
+    const productsPurchasedTitle = productsPurchase.map(item => item.product.title);
+    const productsUnpurchasedTitle = ProductsCanceled.map(item => item.product.title);
+
+    const email = {
+        to: user.email,
+        subject:  'Compra Exitosa', 
+        html: successfulPurchase(productsPurchasedTitle, total, productsUnpurchasedTitle)
+    }
+    await sendEmail(email);
+
+    return ticketResult;
 };

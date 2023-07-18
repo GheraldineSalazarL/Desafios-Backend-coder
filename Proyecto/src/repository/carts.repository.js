@@ -24,16 +24,12 @@ export default class CartsRepository {
     
     getCart = async(cid)=> {
         const result = await cartsManager.getById(cid);
-        if(result===null){
-            throw new ResultNotFound('cart not found');
-        }
         return result;
     };
     
-    saveProductToCart = async (cid, pid) => {
-        const result = await cartsManager.saveId(cid, pid);
+    saveProductToCart = async (cid, pid, quantity) => {
+        const result = await cartsManager.saveId(cid, pid, quantity);
         return result;
-        // await manager.saveId(cid, pid);
     };
     
     deleteProductToCart = async (cid, pid) => {
@@ -78,59 +74,59 @@ export default class CartsRepository {
     //         return result;
     // };
 
-    purchaseCart = async (cid, req) => {
-        const cart = await cartsManager.getById(cid);
-        if(!cart) return "cart not found";
+//     purchaseCart = async (cid, req) => {
+//         const cart = await cartsManager.getById(cid);
+//         if(!cart) return "cart not found";
 
-        const productsPurchase = [];
-        const ProductsCanceled = [];
+//         const productsPurchase = [];
+//         const ProductsCanceled = [];
 
-        for (const item of cart.products) {
-            const product = await productsManager.getById(item.product);
+//         for (const item of cart.products) {
+//             const product = await productsManager.getById(item.product);
 
-            if (!product) {
-                return `Product ${item._id} not found`;
-            }
+//             if (!product) {
+//                 return `Product ${item._id} not found`;
+//             }
       
-            if (product.stock >= item.quantity) {
-                const price = product.price;
-                productsPurchase.push({...item, price});
-                product.stock -= item.quantity;
-                await productsManager.update({"stock": product.stock}, product._id);
-            } else {
-                ProductsCanceled.push(item)
-            }
-        }
+//             if (product.stock >= item.quantity) {
+//                 const price = product.price;
+//                 productsPurchase.push({...item, price});
+//                 product.stock -= item.quantity;
+//                 await productsManager.update({"stock": product.stock}, product._id);
+//             } else {
+//                 ProductsCanceled.push(item)
+//             }
+//         }
 
-        let total = 0;
-        for (const product of productsPurchase) {
-            const subtotal = product.price * product.quantity;
+//         let total = 0;
+//         for (const product of productsPurchase) {
+//             const subtotal = product.price * product.quantity;
           
-            total += subtotal;
-        }
+//             total += subtotal;
+//         }
 
-        await cartsManager.update(cid, ProductsCanceled);
+//         await cartsManager.update(cid, ProductsCanceled);
         
-        const code = uniqid();
-        const purchaseDatetime = new Date();
-        // const token = req.cookies.token;
-        // const decodedToken = jwt.verify(token, PRIVATE_KEY);
-        const user = req.user;
-        console.log(user)
-        const ticket = {
-            code: code,
-            date: purchaseDatetime,
-            amount: total, 
-            purchaser: user.email
-        }
-        await ticketsManager.save(ticket);
+//         const code = uniqid();
+//         const purchaseDatetime = new Date();
+//         // const token = req.cookies.token;
+//         // const decodedToken = jwt.verify(token, PRIVATE_KEY);
+//         const user = req.user;
+//         console.log(user)
+//         const ticket = {
+//             code: code,
+//             date: purchaseDatetime,
+//             amount: total, 
+//             purchaser: user.email
+//         }
+//         await ticketsManager.save(ticket);
 
-        const ticketResult = {
-            productsPurchased: productsPurchase,
-            total: total,
-            productsUnpurchased: ProductsCanceled,
-        }
+//         const ticketResult = {
+//             productsPurchased: productsPurchase,
+//             total: total,
+//             productsUnpurchased: ProductsCanceled,
+//         }
 
-        return ticketResult;
-};
+//         return ticketResult;
+// };
 }

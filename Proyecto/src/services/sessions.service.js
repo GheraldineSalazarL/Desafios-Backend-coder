@@ -1,8 +1,8 @@
 import UsersDto from '../dao/DTOs/users.dto.js';
 import SessionsRepository from '../repository/sessions.repository.js';
 import { compareHashedData, generateToken, hashData } from '../utils.js';
-import { IncorrectLoginCredentials, ResultNotFound, SamePassword, TokenExpired } from '../utils/customExceptions.js';
-import { loginNotification, registerNotification } from '../utils/customHTML.js';
+import { IncorrectLoginCredentials, ResultNotFound, SamePassword, TokenExpired, UserExists } from '../utils/customExceptions.js';
+import { DeleteUserNotification, generatePasswordResetEmailHTML, loginNotification, registerNotification } from '../utils/customHTML.js';
 import { sendEmail } from './mail.service.js';
 import bcrypt from 'bcrypt';
 
@@ -10,8 +10,6 @@ import bcrypt from 'bcrypt';
 const sessionsRepository = new SessionsRepository();
 
 export const register = async (user) => {
-    // const result = await sessionsRepository.register(user);
-
     const hashPassword = await hashData(user.password);
     user.password = hashPassword;
     user.rol = user.rol.toUpperCase();
@@ -29,8 +27,6 @@ export const register = async (user) => {
 }
 
 export const login = async (user, password) => {
-    // const result = await sessionsRepository.login(email, password);
-
     const comparePassword = await compareHashedData(password, user.password);
     if(!comparePassword) {
         throw new IncorrectLoginCredentials('Incorrect credentials');
@@ -63,7 +59,7 @@ export const getByEmailRegister = async (email) => {
 }
 
 export const forgotPassword  = async (user) => {
-    const  Hash = await bcrypt.hash(user.email, 1);
+    const Hash = await bcrypt.hash(user.email, 1);
     const userHash = Buffer.from(Hash).toString('base64');
 
     const resetPassword = {
@@ -76,60 +72,26 @@ export const forgotPassword  = async (user) => {
     const email = {
         to: user.email,
         subject:  'Recuperación de contraseña', 
-        html: 
-            `<!DOCTYPE html>
-            <html>
-            <head>
-                <title>Recuperación de Contraseña</title>
-                <style>
-                    .container {
-                        width: 300px;
-                        padding: 20px;
-                        background-color: #f0f0f0;
-                        border: 1px solid #ccc;
-                        border-radius: 5px;
-                        text-align: center;
-                        margin: 0 auto;
-                        margin-top: 50px;
-                    }
-            
-                    .success {
-                        color: #008000;
-                        font-size: 18px;
-                        font-weight: bold;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <h2 class="success">Recuperación de contraseña</h2>
-                    <p>Para recuperar la contraseña haga click en el enlace</p>
-                    <a href="http://localhost:8080/resetPassword?token=${userHash}"> <button> Recuperar Contraseña </button> </a>
-                </div>
-            </body>
-            </html>`
-            // <a href="http://localhost:8080/api/sessions/reset-password/${userHash}"> <button> Recuperar Contraseña </button> </a>
+        html: generatePasswordResetEmailHTML(userHash)
     }
     await sendEmail(email);
 
     return result; 
 }
 
-export const getUserResetPassword = async (userToken, newPassword) => {
+export const getUserResetPassword = async (userToken) => {
     const userResetPasswordDB = await sessionsRepository.getUserResetPassword(userToken);
-    if(!userResetPasswordDB){
-        throw new ResultNotFound('Token is invalid or has expired');
-    }
+    return userResetPasswordDB;
 
-    const userDB = await sessionsRepository.getUserDB(userResetPasswordDB.user);
-    if(!userDB){
-        throw new ResultNotFound('User not found');
-    }
+};
 
-    const tokenExpiration = 3600000 ; // 1 hora en milisegundos
-    const currentTime = new Date().getTime();
+export const resetPassword = async (user, userResetPasswordDB, newPassword) => {
     const tokenCreatedAt = userResetPasswordDB.createdAt.getTime();
-    const obj = {"email" : userDB.email};
+    const tokenExpiration = 300000 ; // 1 hora en milisegundos
+    const currentTime = new Date().getTime();
+    
+    const obj = {"email" : user.email};
+    
     if (tokenCreatedAt + tokenExpiration < currentTime) {
         await sessionsRepository.deleteUserResetPassword(userResetPasswordDB.user);
         fetch('http://localhost:8080/api/sessions/forgot-password', {
@@ -142,17 +104,17 @@ export const getUserResetPassword = async (userToken, newPassword) => {
         throw new TokenExpired(`Token expired, new token generated and sent by email`);
     }
 
-    const comparePassword = await compareHashedData(newPassword, userDB.password)
+    const comparePassword = await compareHashedData(newPassword, user.password)
     if(comparePassword) {
         throw new SamePassword('Cant enter the same password as before');
     }
 
     const hashPassword = await hashData(newPassword);
 
-    const userUpdate = await sessionsRepository.resetPassword(userDB, hashPassword);
+    const userUpdate = await sessionsRepository.resetPassword(user, hashPassword);
 
     return userUpdate;
-};
+}
 
 export const getById = async (uid) =>{
     const user = await sessionsRepository.getById(uid)
@@ -175,4 +137,51 @@ export const saveDocuments = async (uid, documents) => {
 export const updateLastConnection = async (email) => {
     const updateLastConnection =  await sessionsRepository.updateLastConnection(email);
     return updateLastConnection;
+}
+
+export const getUsers = async () => {
+    const users =  await sessionsRepository.getUsers();
+    if(!users){
+        throw new ResultNotFound('Users not found');
+    }
+    return users;
+}
+
+export const deleteUsersInactive = async () => {
+    const currentTime = new Date();
+    const users =  await sessionsRepository.getUsers();
+    if(!users){
+        throw new ResultNotFound('Users not found');
+    }
+    
+    const inactiveUsers = [];
+
+    users.forEach(user => {
+        const lastActivityTime = user.last_connection;
+    
+        const timeDifferenceInMinutes = Math.floor((currentTime - lastActivityTime) / (1000 * 60));
+    
+        if (timeDifferenceInMinutes >= 2880) {
+            sessionsRepository.deleteUsers(user._id.toString());
+            const email = {
+                to: user.email,
+                subject:  'Usuario eliminado', 
+                html: DeleteUserNotification
+            }
+            sendEmail(email);
+            inactiveUsers.push(user.email);
+        }
+    });
+
+    return inactiveUsers; 
+}
+
+export const deleteUserId = async (uid) => {
+    const result =  await sessionsRepository.deleteUsers(uid);
+    return result
+}
+
+export const updateCart = async (email, cart) => {
+    const result = await sessionsRepository.updateCart(email, cart);
+    return result; 
 }

@@ -12,6 +12,13 @@ export class IncorrectLoginCredentials extends Error{
     }
 }
 
+export class UserExists extends Error{
+    constructor(message){
+        super(message);
+        this.name = this.constructor.name; 
+    }
+}
+
 export class TokenExpired extends Error{
     constructor(message) {
         super(message);
@@ -34,6 +41,21 @@ export class InputIncomplete extends Error{
 }
 
 export class RolForbiden extends Error{
+    constructor(message){
+        super(message);
+        this.name = this.constructor.name; 
+    }
+}
+
+export class UserCannotChanged extends Error{
+    constructor(message){
+        super(message);
+        this.name = this.constructor.name; 
+    }
+}
+
+
+export class NotDocuments extends Error{
     constructor(message){
         super(message);
         this.name = this.constructor.name; 

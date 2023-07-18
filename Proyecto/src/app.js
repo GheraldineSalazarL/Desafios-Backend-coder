@@ -14,11 +14,13 @@ import Chat from './dao/dbManagers/messages.js'
 
 import viewsRouter from './routes/web/views.router.js';
 import authGithub from './routes/api/authGithub.router.js';
-
 import UsersRouter from "./routes/api/users.router.js";
 import SessionRouter from "./routes/api/sessions.router.js";
 import CartsRouter from "./routes/api/carts.router.js";
 import ProductsRouter from './routes/api/products.router.js';
+
+import * as productsService from './services/products.service.js'; 
+
 
 import { loggerTest } from "./routes/api/loggerTest.js";
 
@@ -74,8 +76,6 @@ initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use('/api/products', productsRouter);
-// app.use('/api/carts', cartsRouter);
 app.use('/', viewsRouter); 
 app.use('/api/authGithub', authGithub);
 app.use('/api/sessions', sessionRouter.getRouter());
@@ -92,7 +92,6 @@ const server = app.listen(8080, () => console.log('Listening'));
 
 const io = new Server(server);
 
-// const manager = new Manager(`${__dirname}/files/productos.json`);
 const productsManager = new Products();
 const chatManager = new Chat();
 
@@ -102,39 +101,43 @@ io.on('connection', async socket => {
     console.log("Cliente conectado")
     
     //web productos
-    // const products = await manager.getAll();
     const products = await productsManager.getAll();
 
     io.emit('products', products);
 
-    socket.on('newProduct',  async  data => {
-        console.log(data);
-        if(!data.title || !data.description || !data.code || !data.price || !data.stock || !data.category){
-            // return res.status(400).send({status: 'error', message:'Valores incompletos'});
-            throw CustomError.createError({
-                name: 'UserError',
-                cause: generateProductErrorInfo({
-                    title: data.title,
-                    description: data.description,
-                    code: data.code,
-                    price: data.price,
-                    stock: data.stock, 
-                    category: data.category
-                }),
-                message: 'Error tratando de crear un producto',
-                code: EErrors.INVALID_TYPES_ERROR
-            });
+    socket.on('newProduct', async data => {
+        try {
+            if (!data.title || !data.description || !data.code || !data.price || !data.stock || !data.category) {
+                throw CustomError.createError({
+                    name: 'UserError',
+                    cause: generateProductErrorInfo({
+                        title: data.title,
+                        description: data.description,
+                        code: data.code,
+                        price: data.price,
+                        stock: data.stock, 
+                        category: data.category
+                    }),
+                    message: 'Error tratando de crear un producto',
+                    code: EErrors.INVALID_TYPES_ERROR
+                });
+            }
+            await productsManager.save(data);
+            
+            const productsAll = await productsManager.getAll();
+            io.emit('newProductAdded', { success: true });
+
+            io.emit('products', productsAll);
+        } catch (error) {
+            console.log(error.message);
+            io.emit('warningMessage', 'Por favor, completa todos los campos antes de crear el nuevo producto.');
         }
-        await productsManager.save(data);
-        req.logger.info('Actualización de base de datos realizada');
-        // await manager.save(data);
-        const productsAll = await productsManager.getAll();
-        io.emit('products', productsAll);
-    })
-    
+    });
+
     socket.on('spliced', async data => {
-        await productsManager.deleteById(data);
-        // await manager.deleteById(data);
+        let token = socket.request.headers.cookie?.split('; ').find(row => row.startsWith('token=')).split('=')[1];
+
+        await productsService.deleteProduct(data, token);
 
         const productsAll = await productsManager.getAll();
         io.emit('products', productsAll);
@@ -142,10 +145,11 @@ io.on('connection', async socket => {
 
 
     //web chat
+    io.emit('messageLogs', messages);
+
     socket.on('message', async data => {
         messages.push(data);
         await chatManager.save(data);
-        req.logger.info('Actualización de base de datos realizada');
         io.emit('messageLogs', messages);
     });
 

@@ -1,24 +1,78 @@
 <div class="container">
-    <h1>Carrito de compras</h1>
-    {{#if cart}}
-    {{#each cart.products}}
-        <div class="product-container">
-            <div class="img-info-product">
-                <img src={{this.product.thumbnails}}>
-                <div class="info-product">
-                    <h3>Nombre: {{this.product.title}}</h3>
-                    <p>Descipción: {{this.product.description}}</p>
-                    <p>Precio: {{this.product.price}}</p>
-                    <p>Cantidad: {{this.quantity}}</p>
-                </div>
+    <header>
+        <div class="container-header">
+            <a href="/products" class="header-logo">
+                <i class="fas fa-shopping-bag"></i>
+                <h1> Tu Tienda </h1>
+            </a>
+            <div class="header-menu">
+                <ul class="menu">
+                    {{#if user}}
+                    <li>
+                        <a href="#"><i class="fas fa-user"></i></a>
+                        <ul class="submenu">
+                            <li><a href="/profile">Perfil</a></li>
+                            <li><a href="/api/sessions/logout">Salir</a></li>
+                        </ul>
+                    </li>
+                    {{/if}}
+                    <li><a href="/cart"><i class="fas fa-shopping-cart"></i></a></li>
+                </ul>
             </div>
-            <hr>
         </div>
-    {{/each}}
-    {{else}}
-    <p>No hay elementos en el carrito</p>
-    {{/if}}
+    </header>
+
+    <section class="carrito-container">
+        <h3>Carrito de compras</h3>
+        {{#if cart}}
+        <div class="carrito">
+            <div class="products-container">
+                <div id="cid-data" data-cid="{{cid}}"></div>
+                {{#each cart.products}}
+                <div class="product-container">
+                    <div class="img-info-product">
+                        <img src={{this.product.thumbnails}}>
+                        <div class="info-product">
+                            <p><b>{{this.product.title}}</b></p>
+                            <p>Código: {{this.product.code}}</p>
+                            <p>Cantidad: {{this.quantity}}</p>
+                            <p>Cantidad: {{this.product._id}}</p>
+                        </div>
+                        <div class="controller">
+                            <button class="btn-delete" onclick="deleteClick('{{this.product._id}}')">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                            <p><b>{{this.product.price}}</b></p>
+                        </div>
+
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            <div class="abstract">
+                <h2>Resumen</h2>
+                <hr>
+                <div class="total">
+                    <p><b>Subtotal</b></p>
+                    <p>${{total}}</p>
+                </div>
+                <div class="total">
+                    <p><b>Total</b></p>
+                    <p>${{total}}</p>
+                </div>
+                <button onclick="buy(`{{cid}}`)">Comprar</button>
+            </div>
+        </div>
+        {{else}}
+        <div class="no-products">
+            <p>No hay elementos en el carrito</p>
+            <a href="/products">Continuar comprando</a>
+        </div>
+        {{/if}}
+    </section>
 
 </div>
 
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/cart.js"></script>
 <script src="https://kit.fontawesome.com/e9d32d96ee.js" crossorigin="anonymous"></script>

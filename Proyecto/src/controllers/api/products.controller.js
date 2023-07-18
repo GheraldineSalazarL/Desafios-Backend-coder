@@ -6,6 +6,8 @@ import { ResultNotFound } from '../../utils/customExceptions.js';
 import jwt from 'jsonwebtoken';
 import config from '../../config/config.js';
 import { RolForbiden } from '../../utils/customExceptions.js';
+import { sendEmail } from '../../services/mail.service.js';
+import { productDeleteNotification } from '../../utils/customHTML.js';
 
 const PRIVATE_KEY = config.secret;
 
@@ -137,41 +139,22 @@ const updateProduct = async (req,res)=> {
 const deleteProduct =  async (req,res)=> {
     try{
         const pid = req.params.pid;
-
         const token = req.cookies.token;
-        const decodedToken = jwt.verify(token, PRIVATE_KEY);
 
-        const product = await productsService.getProduct(pid);
+        const result = await productsService.deleteProduct(pid, token)
 
-
-        if(decodedToken.rol === 'ADMIN') {
-            const result = await productsService.deleteProduct(pid)
-
-            req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
-            return res.send({status: 'sucess', message:'Producto Eliminado'});
-        } 
-
-        if(decodedToken.rol === 'PREMIUM' && decodedToken.email === product.owner) {
-            const result = await productsService.deleteProduct(pid)
-
-            req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
-            return res.send({status: 'sucess', message:'Producto Eliminado'});
-        } else {
-            throw new RolForbiden('User does not owner of product');
-        }
-
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
+        res.sendSuccess(`Producto Eliminado`);  
     }catch(error){
         if(error instanceof ResultNotFound){
-            res.sendClientError('Carrito no encontrado')
+            res.sendClientError('Producto no encontrado')
         }
         if(error instanceof RolForbiden){
-            res.sendClientError('User does not owner of product')
+            res.sendClientError('Este usuario Premium no es dueño del producto, no lo puede eliminar')
         }
-        res.status(500).send({status: 'error'});
+        res.sendServerError(error);
         req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
-
-    // const removedProduct = await manager.deleteById(pid)
 };
 
 export {

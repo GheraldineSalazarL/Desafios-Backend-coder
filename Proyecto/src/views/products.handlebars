@@ -1,71 +1,124 @@
-<div class="container">
-    <div class="top">
-        <h1>Nuestros Productos</h1>
-        {{#if user}}
-            <a href="/api/sessions/logout">
-                <button class="btn">Logout</button>
+<div>
+    <header>
+        <div class="container">
+            <a href="/products" class="header-logo">
+                <i class="fas fa-shopping-bag"></i>
+                <h1> Tu Tienda </h1>
             </a>
-            <a class="cart" href="/profile">
-                <i class="fa-solid fa-user fa-2xl"></i>
-            </a>
-        {{else}}
-            <a href="/login">
-                <button class="btn">Login</button>
-            </a>
-        {{/if}}
-        <a class="cart" href="/cart">
-            <i class="fa-solid fa-cart-shopping fa-2xl"></i>
-        </a>
-    </div>
-    {{#if user}}
-        <div class="user">
-            <p>Bienvenido {{user.name}}</p>
-            <p>Email: {{user.email}}</p>
-            <p>Rol: {{user.rol}}</p>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="header-menu">
+                <ul class="menu">
+                    {{#if admin}}
+                    <li>
+                        <a href="#">Administración</a>
+                        <ul class="submenu">
+                            <li><a href="/users">Usuarios</a></li>
+                            <li><a href="/realtimeproducts">Productos</a></li>
+                        </ul>
+                    </li>
+                    {{/if}}
+                    {{#if premium}}
+                    <li>
+                        <a href="#">Administración</a>
+                        <ul class="submenu">
+                            <li><a href="/realtimeproducts">Productos</a></li>
+                        </ul>
+                    </li>
+                    {{/if}}
+                    <li><a href="/products">Productos</a></li>
+                    {{#if us}}
+                    <li><a href="/chat">Chat</a></li>
+                    {{/if}}
+                    {{#if user}}
+                    <li>
+                        <a href="#"><i class="fas fa-user"></i></a>
+                        <ul class="submenu">
+                            <li><a href="/profile">Perfil</a></li>
+                            <li><a href="/api/sessions/logout">Salir</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/cart"><i class="fas fa-shopping-cart"></i></a></li>
+                    {{/if}}
+                </ul>
+            </div>
         </div>
-    {{/if}}
-    <div class="products-container">
+        <hr>
+    </header>
+
+    <section class="filters">
+        <div class="form-group">
+            <label for="categoryFilter">Categoría:</label>
+            <select id="categoryFilter">
+                <option value="">Todas las categorías</option>
+                {{#each cat}}
+                <option value="{{this}}">{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="sortFilter">Orden:</label>
+            <select id="sortFilter">
+                <option value="">Relevancia</option>
+                <option value=-1>Precio (mayor a menor)</option>
+                <option value=1>Precio (menor a mayor)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="stockFilter">Stock:</label>
+            <input type="number" min="0" id="stockFilter" class="stockFilter">
+        </div>
+    </section>
+
+
+
+    <section class="products">
         {{#each products}}
         <div class="product-container">
-            <h3>Nombre: {{this.title}}</h3>
-            <div class="img-info-product">
-                <img src={{this.thumbnails}} alt="">
-                <div class="info-product">
-                    <p>Descipción: {{this.description}}</p>
-                    <p>Código: {{this.code}}</p>
-                    <p>Precio: {{this.price}}</p>
-                    <p>Stock: {{this.stock}}</p>
-                    <p>Categoría: {{this.category}}</p>
-                    <p>Id: {{this._id}}</p>
-                    {{!-- <form action="/cart/add/{{this._id}}" method="post">
-                        <button type="submit">Agregar al carrito</button>
-                    </form> --}}
-                    <button onclick="addCart('{{this._id}}')">Agregar al carrito</button>
+            <img class="img" src={{this.thumbnails}} alt="">
+            <div class="info-product">
+                <h4> {{this.title}}</h4>
+                <h5>{{this.category}}</h5>
+                <p>{{this.description}}</p>
+                {{!-- <p>Código: {{this.code}}</p> --}}
+                <h4 class="price"> $ {{this.price}}</h4>
+                {{!-- <p>Stock: {{this.stock}}</p> --}}
+                {{!-- <p>Id: {{this._id}}</p> --}}
+
+                <div class="add">
+                    <input type="number" min="0" id="{{this._id}}" value="1" placeholder="1" />
+                    <button class="icon" onclick="addCart('{{this._id}}')"><i class="fas fa-shopping-cart"></i></button>
                 </div>
             </div>
         </div>
         {{/each}}
-    </div>
+    </section>
+
+
     <div class="controllers">
         {{#if hasPrevPage}}
-            <a href="/products?page={{prevPage}}">
-                <i class="fa-solid fa-circle-left fa-xl"></i>
-            </a>
+        <a id="prevPageLink" onclick="updatePageUrl({{prevPage}})">
+            <i class="fa-solid fa-chevron-left"></i>
+            Anterior
+        </a>
         {{/if}}
 
-        <h3>{{Page}}</h3>
+        <p>{{Page}} de {{totalPages}}</p>
 
         {{#if hasNextPage}}
-            <a href="/products?page={{nextPage}}">
-                <i class="fa-solid fa-circle-right fa-xl"></i>
-            </a>
+        <a id="nextPageLink" onclick="updatePageUrl({{nextPage}})"> Siguiente
+            <i class="fa-solid fa-chevron-right"></i>
+        </a>
         {{/if}}
     </div>
+
+
 </div>
 
-{{!-- <script src="/socket.io/socket.io.js"></script> --}}
+{{!--
+<script src="/socket.io/socket.io.js"></script> --}}
 <script src="/js/products.js"></script>
 <script src="https://kit.fontawesome.com/e9d32d96ee.js" crossorigin="anonymous"></script>
-
-
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

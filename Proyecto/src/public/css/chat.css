@@ -1,14 +1,168 @@
-.container{
-    border: 1px solid #606999;
-    border-radius: 10px;
-    margin: auto;
-    width: 500px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    padding: 20px;
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    padding: 0px;
+    margin: 0px;
 }
-.welcome{
+
+.container-header {
+    margin: 0 auto;
+    padding: 30px 50px 20px 50px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+header {
+    background-color: #f4f6f9;
+}
+
+.header-logo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-decoration: none;
+    color: #0070E0;
+}
+
+.header-logo i {
+    font-size: 35px;
+    margin-right: 20px;
+}
+
+h1 {
+    font-size: 25px;
+    margin: 0px;
+}
+
+ul.menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+}
+
+ul.menu li {
+    display: inline-block;
+    position: relative;
+}
+
+ul.menu li a {
+    display: block;
+    margin: 10px 30px 10px 30px;
+    text-decoration: none;
+    color: #2c3e5c;
+}
+
+ul.submenu {
+    display: none;
+    position: absolute;
+    left: 0;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    padding: 0px;
+}
+
+ul.submenu li {
+    display: block;
+    margin: 10px 0px 10px 0px;
+    padding: 0px;
     text-align: center;
 }
-h1{
-    color: #606999;
+
+ul.submenu li a {
+    display: block;
+    margin: 0px;
+    padding: 0px;
+}
+
+ul.menu li:hover ul.submenu {
+    display: block;
+}
+
+ul.menu li a:hover {
+    color: #E07000;
+}
+
+ul.submenu li a:hover {
+    color: #E07000;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 25%;
+
+}
+
+.search-bar input[type="text"] {
+    flex: 1;
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    outline: none;
+}
+
+.search-bar button[type="submit"] {
+    background-color: transparent;
+    color: #0070E0;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 18px;
+}
+
+.search-bar button:hover {
+    color: #E07000;
+}
+
+.welcome h1 {
+    color: #0070E0;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.input-container {
+    text-align: center;
+    margin: auto;
+}
+
+.chat-input {
+    width: 70%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.chat-container {
+    width: 70%;
+    margin: 20px auto 20px auto;
+    padding: 10px;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.2);
+    height: calc(100vh - 265px);
+}
+
+.chat-container .message {
+    background-color: #f0f0f0;
+    padding: 8px;
+    border-radius: 10px;
+    margin: 5px 40% 0 0;
+    display: inline-block;
+    max-width: 70%;
+}
+
+.chat-container .own-message {
+    background-color: #dcf8c6;
+    float: right;
+    margin: 5px 0 0 40%
 }

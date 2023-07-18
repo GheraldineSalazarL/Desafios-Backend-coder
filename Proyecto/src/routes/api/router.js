@@ -87,7 +87,7 @@ export default class Router {
 
         const user = jwt.verify(token, PRIVATE_KEY);
         if(!policies.includes(user.rol.toUpperCase())){
-            res.status(403).json({ message: 'Forbidden'})
+            res.status(403).json({ message: 'Forbidden', error: 'Forbidden'})
             return req.logger.error('Forbidden');
         }
         req.user = user;
@@ -104,9 +104,9 @@ export default class Router {
         res.sendClientError = (error) => {
             res.status(400).json({ error });
         };
-        // res.sendForbbidenError = (error) => {
-        //     res.status(403).json({ error });
-        // };
+        res.sendForbbidenError = (error) => {
+            res.status(403).json({ error });
+        };
         // res.sendNotFoundError = (error) => {
         //     res.status(404).json({ error });
         // };

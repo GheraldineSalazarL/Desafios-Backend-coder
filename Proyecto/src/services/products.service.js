@@ -1,7 +1,12 @@
 import Products from '../dao/dbManagers/products.js';
-import { ResultNotFound } from '../utils/customExceptions.js';
+import { ResultNotFound, RolForbiden } from '../utils/customExceptions.js';
+import { sendEmail } from './mail.service.js';
+import jwt from 'jsonwebtoken';
+import config from '../config/config.js';
+import { productDeleteNotification } from '../utils/customHTML.js';
 
 const productsManager = new Products();
+const PRIVATE_KEY = config.secret;
 
 export const getProductsPaginate = async (limit, page, sort, category, stock) => {  
     let query = {};
@@ -33,6 +38,14 @@ export const getProductsPaginate = async (limit, page, sort, category, stock) =>
     return res;
 };
 
+export const getAllProducts = async()=> {
+    const result = await productsManager.getAll();
+    if(result===null){
+        throw new ResultNotFound('products not found');
+    }
+    return result;
+};
+
 export const getProduct = async(pid)=> {
     // const product = await manager.getById(pid);
     const result = await productsManager.getById(pid);
@@ -56,10 +69,32 @@ export const updateProduct = async (productReq, pid)=> {
     // await manager.update(productReq, pid);
 };
 
-export const deleteProduct =  async (pid)=> {
-    const result = await productsManager.deleteById(pid)
+export const deleteProduct =  async (pid, token)=> {
 
-    return result;
+    const decodedToken = jwt.verify(token, PRIVATE_KEY);
 
-    // const removedProduct = await manager.deleteById(pid)
+    const product = await productsManager.getById(pid);
+    if(!product){
+        throw new ResultNotFound('product not found');
+    }
+
+    if(decodedToken.rol === 'ADMIN' || (decodedToken.rol === 'PREMIUM' && decodedToken.email === product.owner)) {
+        const result = await productsManager.deleteById(pid)
+
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if(decodedToken.rol === 'ADMIN' && regex.test(product.owner)){
+            const email = {
+                to: product.owner,
+                subject:  'Producto eliminado', 
+                html: productDeleteNotification
+            }
+            await sendEmail(email);
+        }
+
+        return result;
+    } else {
+        throw new RolForbiden('User does not owner of product');
+    }
+
 };

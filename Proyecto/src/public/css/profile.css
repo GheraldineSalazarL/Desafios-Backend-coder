@@ -128,126 +128,134 @@ ul.submenu li a:hover {
 
 
 
-.users {
-    margin: 30px 70px 30px 70px;
+
+.container-profile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 80px);
+    background-color: #f4f6f9;
 }
 
-.users h2{
+.profile-card {
+    width: 500px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+}
+
+.profile-info {
+    display: flex;
+    /* align-items: center; */
+    flex-direction: column;
+}
+
+.profile-info i {
+    font-size: 90px;
+    color: #0070d2;
+    border-radius: 50%;
     text-align: center;
 }
 
-table {
-    border-collapse: collapse;
-    width: 100%;
+.profile-details {
+    margin: 15px 15px 0px 15px;
 }
 
-table th,
-table td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+.profile-documents {
+    display: flex;
+    flex-direction: column;
+    margin: 15px;
 }
 
-table thead{
-    color: #0070E0;
+.profile-documents .doc {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
 }
 
-table thead i{
-    font-size: 15px;
-    padding-right: 5px;
+input[type="file"] {
+    display: none;
 }
 
-table tr:hover {
-    background-color: white;
-}
-
-table th {
-    background-color: #f2f2f2;
-}
-
-table td {
-    vertical-align: middle;
-}
-
-
-
-.switch {
-    position: relative;
+.file-label {
     display: inline-block;
-    width: 60px;
-    height: 34px;
-    display: flex;
-    margin: auto;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
+    background-color:#f4f6f9;
+    color: rgb(36, 36, 36);
+    border: 1px dashed #ccc;
+    padding: 10px 5px;
+    border-radius: 5px;
     cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    -webkit-transition: .4s;
-    transition: .4s;
-    border-radius: 34px;
-    /* Agregamos el redondeo */
 }
 
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
-    border-radius: 50%;
-    /* Agregamos el redondeo */
+.file-label:hover {
+    background-color: #E07000;
 }
 
-input:checked+.slider {
-    background-color: #2196F3;
+.file-label-ok {
+    display: inline-block;
+    background-color: #53af5b;
+    color: white;
+    padding: 10px 5px;
+    border-radius: 5px;
+    border: 0;
 }
 
-input:focus+.slider {
-    box-shadow: 0 0 1px #2196F3;
+.file-label-upload{
+    display: inline-block;
+    background-color:#E07000;
+    color: white;
+    padding: 10px 5px;
+    border-radius: 5px;
+    border: 0;
 }
 
-input:checked+.slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
+.file-label-ok i {
+    margin-right: 5px;
 }
 
-.slider.round {
-    border-radius: 34px;
+.file-label i {
+    margin-right: 5px;
 }
 
-.slider.round:before {
-    border-radius: 50%;
+.file-label span {
+    font-weight: bold;
 }
 
-.delete { 
+button.btn {
+    background-color: #0070E0;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
     width: 100%;
-    display: flex;
-    justify-content: center;
 }
 
-.delete i{
-    color:#c01919;
-    font-size: 18px;
+button.btn:hover {
+    background-color: #E07000;
+}
+
+button.btn a {
+    text-decoration: none;
+    color: #fff;
+}
+
+form button {
+    background-color: #0070E0;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 5px;
     cursor: pointer;
 }
 
-.delete i:hover{
-    color:#E07000;
+form button:hover {
+    background-color:#E07000;
+}
+
+form span{
+    font-size: 13px;
 }

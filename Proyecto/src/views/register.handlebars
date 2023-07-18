@@ -1,25 +1,49 @@
-<div class="register">
+<div class="container">
+    <div class="logo">
+        <i class="fas fa-user-check"></i>
+    </div>
     <h1>Registro</h1>
     <form id="registerForm">
-        <label>Nombre</label>
-        <input name="first_name">
-        <br/>
-        <label>Apellido</label>
-        <input name="last_name">
-        <br/>
-        <label>Email</label>
-        <input name="email">
-        <br/>
-        <label>Edad</label>
-        <input name="age">
-        <br/>
-        <label>Rol</label>
-        <input name="rol">
-        <br/>
-        <label>Contraseña</label>
-        <input type="password" name="password">
-        <input class="btn" type="submit">
+        <div class="form-group">
+            <label for="first_name">Nombre</label>
+            <input type="text" id="first_name" name="first_name" required>
+        </div>
+        <div class="form-group">
+            <label for="last_name">Apellido</label>
+            <input type="text" id="last_name" name="last_name" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="age">Edad</label>
+            <input type="text" id="age" name="age" required>
+        </div>
+        <div class="form-group">
+            <label for="rol">Rol</label>
+            {{!-- <input type="text" id="rol" name="rol" required> --}}
+            <select id="rol" name="rol" required>
+                <option value="ADMIN">Administrador</option>
+                <option value="PREMIUM">Usuario Premium</option>
+                <option value="USER">Usuario</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" required>
+        </div>
+        <div class="form-group">
+            <button class="btn" type="submit">Registrarse</button>
+        </div>
+        <hr>
+        <div class="change">
+            <a href="/login">¿Ya tienes una cuenta?</a>
+        </div>
     </form>
-    <p>Ya tienes una cuenta? <a href="/login">Ingresa aquí</a></p>
 </div>
+
+
 <script src='/js/register.js'></script>
+<script src="https://kit.fontawesome.com/e9d32d96ee.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

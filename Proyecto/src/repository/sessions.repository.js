@@ -1,6 +1,4 @@
-import { compareHashedData, generateToken, hashData } from '../utils.js';
 import UsersManager from '../dao/dbManagers/users.js';
-import UsersDto from '../dao/DTOs/users.dto.js';
 
 const usersManager = new UsersManager();
 
@@ -14,19 +12,6 @@ export default class SessionsRepository {
         return newUserDB;
     }
     
-    // login = async (email, password) => {        
-    //     const comparePassword = await compareHashedData(password, user.password);
-    //     if(!comparePassword) {
-    //         const result = 'notCredentials';
-    //         return result;
-    //      } 
-        
-    //     const userDto = new UsersDto(user)
-    //     const userLog = {...userDto}
-    //     const accessToken = generateToken(userLog);
-    //     return accessToken; 
-    // };
-
     getByEmail = async (email) => {
         const userDB = await usersManager.getByEmail(email);
         return userDB;
@@ -42,13 +27,8 @@ export default class SessionsRepository {
         return userResetPasswordDB;
     }
 
-    getUserDB = async(userId) => {
-        const userDB = await usersManager.getById(userId); 
-        return userDB;
-    }
-
-    resetPassword = async(userDB, newPassword) => {
-        const userUpdate = await usersManager.updatePasswordUser(userDB, newPassword);
+    resetPassword = async(user, newPassword) => {
+        const userUpdate = await usersManager.updatePasswordUser(user, newPassword);
         return userUpdate; 
     }
     
@@ -75,6 +55,21 @@ export default class SessionsRepository {
     updateLastConnection = async (email) => {
         const updateLastConnection = await usersManager.updateLastConnection(email);
         return updateLastConnection; 
+    }
+
+    getUsers = async () => {
+        const users = await usersManager.getUsers();
+        return users; 
+    }
+
+    deleteUsers = async (id) => {
+        const usersDelete = await usersManager.deleteUsers(id);
+        return usersDelete; 
+    }
+
+    updateCart = async (email, cart) => {
+        const result = await usersManager.updateCart(email, cart);
+        return result; 
     }
 }
 

@@ -1,5 +1,7 @@
 import * as sessionsService from '../../services/sessions.service.js';
 import { __dirname } from '../../utils.js';
+import { NotDocuments, ResultNotFound, UserCannotChanged } from '../../utils/customExceptions.js';
+import UsersDto from '../../dao/DTOs/users.dto.js';
 
 const current = async (req, res) => {
     res.sendSuccess(req.user); 
@@ -11,28 +13,35 @@ const roleChange = async (req, res) => {
 
         const user= await sessionsService.getById(uid);
 
-        if(user.rol==='ADMIN') return res.status(400).send({status: "error", error: "el rol ADMIN no puede cambiarse"});
+        if(user.rol==='ADMIN'){
+            throw new UserCannotChanged('el rol ADMIN no puede cambiarse');
+        }
 
         const requiredDocuments = ['Identificacion', 'ComprobanteDomicilio', 'ComprobanteEstadoCuenta'];
         const missingDocuments = requiredDocuments.filter(document => user.documents.some(doc => doc.name.split(/[.-]/)[1] === document));
-        console.log(missingDocuments)
 
         let rol; 
         
         if (user.rol === 'USER'){
             if( missingDocuments.length === requiredDocuments.length) {
                 rol = 'PREMIUM'
-            } else { return res.status(400).send({status: "error", error: "el usuario no ha terminado de procesar su documentación"})}
+            } else { 
+                throw new UserCannotChanged('el usuario no ha terminado de procesar su documentación');
+            }
         } else { rol = 'USER'}
 
-        // let rol = user.rol==='USER' ? 'PREMIUM' : 'USER'
-
         const result = await sessionsService.updateUserRol(uid, rol);
-        res.send({status: 'sucess', message:`Rol ${user.rol} modificado por ${rol}`});
+        res.sendSuccess(`Rol ${user.rol} modificado por ${rol}`); 
         return req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch (error) {
-        res.status(500).send({error});
         req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
+        if(error instanceof ResultNotFound){
+            return res.sendClientError(error.message); 
+        }
+        if(error instanceof UserCannotChanged){
+            return res.sendClientError(error.message); 
+        }
+        res.sendServerError(error);
     }
 };
 
@@ -42,8 +51,10 @@ const uploaderDocuments = async (req, res) => {
         const files = req.files;
 
         if (!files || files.length === 0) { 
-        return res.status(400).send({status:"error", error:"No se han subido archivos."})
+            throw new NotDocuments('No se han subido archivos.');
         }
+
+        await sessionsService.getById(uid);
 
         let folder;
     
@@ -62,15 +73,74 @@ const uploaderDocuments = async (req, res) => {
 
         const user = await sessionsService.saveDocuments(uid, documents);
 
-        res.status(200).json({ message: 'Archivos subidos exitosamente.', user });
+        res.sendSuccess('Archivos subidos exitosamente.'); 
     } catch (error) {
-        res.status(500).send({error});
         req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
+        if(error instanceof NotDocuments){
+            return res.sendClientError(error.message); 
+        }
+        if(error instanceof ResultNotFound){
+            return res.sendClientError(error.message); 
+        }
+        res.status(500).send({error});
     }
 };
+
+const getUsers = async (req, res) => {
+    try{        
+        const users = await sessionsService.getUsers();
+        const usersDto = users.map(user => new UsersDto(user));
+
+        res.sendSuccess(usersDto)
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
+    } catch(error){
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
+        if(error instanceof ResultNotFound){
+            return res.sendClientError(error.message); 
+        }
+        res.sendServerError(error);
+    }
+}
+
+const deleteUsersInactive = async (req,res) => {
+    try{
+        const usersDelete = await sessionsService.deleteUsersInactive();
+
+        res.sendSuccess(usersDelete)
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
+    } catch(error){
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
+        if(error instanceof ResultNotFound){
+            return res.sendClientError(error.message); 
+        }
+        res.sendServerError(error);
+    }
+}
+
+const deleteUserId = async (req,res) => {
+    try{
+        const uid = req.params.uid;
+
+        await sessionsService.getById(uid);
+
+        const result = await sessionsService.deleteUserId(uid);
+
+        res.sendSuccess('User deleted')
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
+    } catch(error){
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
+        if(error instanceof ResultNotFound){
+            return res.sendClientError(error.message); 
+        }
+        res.sendServerError(error);
+    }
+}
 
 export { 
     current,
     roleChange, 
-    uploaderDocuments
+    uploaderDocuments, 
+    getUsers, 
+    deleteUsersInactive, 
+    deleteUserId
 }

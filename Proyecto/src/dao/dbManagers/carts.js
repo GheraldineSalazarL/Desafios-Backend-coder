@@ -12,61 +12,45 @@ export default class Carts {
     }
 
     save = async(cart) => {
-        // const carts = await this.getAll();
-
-        // if(carts.length === 0){
-        //     cart.id = 1;
-        // } else{
-        //     cart.id =  carts[carts.length -1].id + 1;
-        // }
-
         const result = await cartsModel.create({});
 
-        // req.logger.info('Actualización de base de datos  CARTS realizada');
         return result;
     }
 
     getById = async (cid) => {
         const cart = await cartsModel.findOne({_id:cid}).populate("products.product");
-        // console.log(cart);
         if(cart === null) {return cart} else {return cart.toObject()};
     }
 
-    saveId = async (cid, pid) => {
+    saveId = async (cid, pid, quantityP) => {
         const cart = await this.getById(cid);
-
-        if (!cart) return;
 
         const productos = cart.products;
         const indexProd = productos.findIndex(prod => prod.product._id == pid);
 
         if(indexProd > -1){
-            const result = await cartsModel.updateOne({_id: {$eq: cid}, "products.product" : pid}, {$inc:{"products.$.quantity" : 1}});
-            // req.logger.info('Actualización de base de datos  CARTS realizada');
+            const result = await cartsModel.updateOne({_id: {$eq: cid}, "products.product" : pid}, {$inc:{"products.$.quantity" : quantityP}});
             return result;
         } else{ 
-            const result = await cartsModel.updateOne({_id: {$eq: cid}}, {$push:{products:{product:pid, quantity:1}}});
-            // req.logger.info('Actualización de base de datos CARTS realizada');
+            const result = await cartsModel.updateOne({_id: {$eq: cid}}, {$push:{products:{product:pid, quantity:quantityP}}});
             return result;
         }
     }  
 
     deleteId = async (cid, pid) => {
-        const cart = await this.getById(cid);
+        // const products = cart.products;
+        // const indexProd = products.findIndex(prod => prod.product._id == pid);
 
-        if (!cart) return;
+        // if(indexProd > -1){
+        //     const result = await cartsModel.updateOne({ _id: cart_id }, { $pull: { products: { product: pid }}});
+        //     return result;
+        // } else{ 
+        //     const result = "error";
+        //     return result;
+        // }
 
-        const products = cart.products;
-        const indexProd = products.findIndex(prod => prod.product._id == pid);
-
-        if(indexProd > -1){
-            const result = await cartsModel.updateOne({ _id: cid }, { $pull: { products: { product: pid }}});
-            // req.logger.info('Actualización de base de datos CARTS realizada');
-            return result;
-        } else{ 
-            const result = "error";
-            return result;
-        }
+        const result = await cartsModel.updateOne({ _id: cid }, { $pull: { products: { product: pid }}});
+        return result;
     }
 
     update = async (cid, productsUpdate) => {

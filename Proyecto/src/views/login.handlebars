@@ -1,19 +1,36 @@
-<div class="login">
+<div class="container">
+    <div class="logo">
+        <i class="fas fa-user-circle"></i>
+    </div>
     <h1>Login</h1>
     <form id="loginForm">
-        <label>Email</label>
-        <input name="email">
-        <br/>
-        <label>Contraseña</label>
-        <input type="password" name="password">
-        <input class="btn" type="submit">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" required>
+        </div>
+        <div class="form-group">
+            <button class="btn" type="submit">Iniciar sesión</button>
+        </div>
+        <hr>
+        <div class="auth">
+            <a href="/api/authGithub/github">
+                <i class="fa-brands fa-github fa-xl"></i>
+                Ingresa con GitHub
+            </a>
+        </div>
+        <hr>
+        <div class="change">
+            <a href="/register">¿No estás registrado?</a>
+            <a href="/forgotPassword">¿Olvidaste la contraseña?</a>
+        </div>
     </form>
-    <div class="auth">
-        <p>O ingresa con GitHub: </p>
-        <a href="/api/authGithub/github"><i class="fa-brands fa-github fa-2xl"></i></a>
-    </div>
-    <p>No estás registrado? <a href="/register">Regístrate aquí</a></p>
-    <p>Olvidaste la contraseña? <a href="/forgotPassword">Restablecerla aquí</a></p>
 </div>
+
+
 <script src='/js/login.js'></script>
 <script src="https://kit.fontawesome.com/e9d32d96ee.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -1,13 +1,14 @@
 import * as cartsService from '../../services/carts.service.js';
-import { ResultNotFound } from '../../utils/customExceptions.js';
+import * as productService from '../../services/products.service.js'; 
+import { ResultNotFound, RolForbiden } from '../../utils/customExceptions.js';
 
 const saveCart = async (req, res) => {
     try{
         const result = await cartsService.saveCart();
-        res.send({status: 'sucess', message:'Carrito creado', payload: result});
+        res.sendSuccess({message:'Carrito creado', payload: result});
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch(error){
-        res.status(500).send({error});
+        res.sendServerError(error);
         req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
 };
@@ -15,10 +16,9 @@ const saveCart = async (req, res) => {
 const getCart = async(req,res)=> {
     try{
         const cid = req.params.cid;
-        // await manager.getById(cid)
 
         const result = await cartsService.getCart(cid);
-        // result ? res.sendSuccess(result) : res.sendClientError('Carrito no encontrado');
+
         res.sendSuccess(result)
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch(error){
@@ -35,6 +35,9 @@ const saveProductToCart = async (req, res) => {
         const cid = req.params.cid;
         const pid = req.params.pid;
 
+        await cartsService.getCart(cid);
+        await productService.getProduct(pid);
+
         const result = await cartsService.saveProductToCart(cid, pid);
 
         result ?  res.sendSuccess({status: 'sucess', message:'Producto agregado al carrito'}) : res.sendClientError({status: 'error', message: 'Carrito no encontrado'})
@@ -42,6 +45,9 @@ const saveProductToCart = async (req, res) => {
     } catch(error){
         res.sendServerError(error);
         req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
+        if(error instanceof ResultNotFound){
+            res.sendClientError('Carrito no encontrado')
+        }
     }
     // await manager.saveId(cid, pid);
 };
@@ -53,13 +59,18 @@ const deleteProductToCart = async (req, res) => {
 
         const result = await cartsService.deleteProductToCart(cid, pid);
         
-        result  
-            ? result === "error" 
-                ? res.sendClientError({status: 'error', message: 'Producto no encontrado dentro del carrito'})
-                : res.sendSuccess({status: 'sucess', message:'Producto eliminado del carrito'})
-            : res.sendClientError({status: 'error', message: 'Carrito no encontrado'});        
+        // result  
+        //     ? result === "error" 
+        //         ? res.sendClientError({status: 'error', message: 'Producto no encontrado dentro del carrito'})
+        //         : res.sendSuccess({status: 'sucess', message:'Producto eliminado del carrito'})
+        //     : res.sendClientError({status: 'error', message: 'Carrito no encontrado'});    
+        
+        res.sendSuccess('Producto eliminado del carrito')
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch(error){
+        if(error instanceof ResultNotFound){
+            return res.sendClientError(error.message); 
+        }
         res.sendServerError(error);
         req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
@@ -117,12 +128,24 @@ const deleteAllProductsToCart = async (req, res) => {
 const saveProductToCartSession = async (req, res) => {
     try {
         const pid = req.params.id;
+        const quantityProduct = req.body.quantityProduct;
+        const token = req.cookies.token;
 
-        const result = await cartsService.saveProductToCartSession(pid, req, res);
-        res.send({status: 'sucess', result});
+        let quantity;
+        if(quantityProduct){ quantity = quantityProduct} else { quantity = 1 }
+
+        const result = await cartsService.saveProductToCartSession(pid, token, quantity);
+        res.sendSuccess({status: 'sucess', result});  
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch (error) {
-        res.status(500).send({error});
+        if(error instanceof ResultNotFound){
+            return res.sendClientError(error.message); 
+        }
+        if(error instanceof RolForbiden){
+            return res.sendForbbidenError(error.message); 
+        }
+
+        res.sendServerError(error);
         req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
 };
@@ -130,12 +153,19 @@ const saveProductToCartSession = async (req, res) => {
 const purchaseCart = async (req, res) => {
     try {
         const cid = req.params.cid;
-
-        const result = await cartsService.purchaseCart(cid, req);
-        res.sendSuccess({status: 'sucess', result});
+        
+        const cart = await cartsService.getCart(cid);   
+        
+        const user = req.user;
+        
+        const result = await cartsService.purchaseCart(cart, user);
+        res.sendSuccess({result})
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch (error) {
-        console.log(error)
+        if(error instanceof ResultNotFound){
+            return res.sendClientError(error.message); 
+        }
+
         res.sendServerError(error);
         req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }

@@ -1,36 +1,105 @@
-.register{
-    width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid #606999;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    padding: 20px;
-    margin-top: 100px;
-    border-radius: 30px;
-}
-h1{
-    text-align: center;
-}
-form{
+body {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* height: 100vh; */
+    background-color: #f4f4f4;
 }
-.btn{
-    width: 100%;
-    margin:auto;
-    padding: 5px;
-    background-color:#606999;
-    border: 1px solid #ffffff;
-    color: #ffffff;
-    justify-items: center;
-    border-radius: 10px;
-    margin-top: 15px;
-}
-.btn:hover {
-    background-color:#ffffff;
-    border: 1px solid #606999;
-    color: #606999;
-}
-p{
+
+.container {
+    padding: 10px 0px 10px 0px;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     text-align: center;
+    width: 50%;
+}
+
+.logo {
+    margin-bottom: 20px;
+}
+
+.logo i {
+    font-size: 80px;
+    color: #0070E0;
+}
+
+h1 {
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 8px 0px 8px 0px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+select {
+    width: 100%;
+    padding: 8px 0px 8px 0px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button.btn {
+    background-color: #0070E0;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.auth {
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+
+    background-color: #fff;
+    color: #0070E0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.auth a {
+    color: #030303;
+    text-decoration: none;
+}
+
+hr {
+    margin: 20px 0;
+    border: none;
+    border-top: 1px solid #ccc;
+}
+
+.fa-brands.fa-github {
+    color: #333;
+    font-size: 28px;
+    margin-right: 10px;
+}
+
+.change a {
+    padding: 15px;
+    color: #0070E0;
+    text-decoration: none;
 }

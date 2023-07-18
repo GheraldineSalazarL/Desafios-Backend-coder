@@ -1,4 +1,3 @@
-import nodemailer from 'nodemailer';
 import { transporter } from '../utils.js';
 
 export const sendEmail = async (email) =>{
