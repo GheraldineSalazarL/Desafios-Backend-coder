@@ -1,7 +1,7 @@
 export class ResultNotFound extends Error{
     constructor(message){
         super(message);
-        this.name = this.constructor.name; //para trabajar con el nombre de la clase especifica
+        this.name = this.constructor.name; 
     }
 }
 

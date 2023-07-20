@@ -34,35 +34,16 @@ export default class Products {
     }
 
     save = async(product) => {
-        // const products = await this.getAll();
-
-        // if(products.length === 0){
-        //     product.id = 1;
-        // } else{
-        //     product.id =  products[products.length -1].id + 1;
-        // }
-
         const result = await productsModel.create(product);
-        // req.logger.info('Actualización de base de datos PRODUCTS realizada');
         return result;
     }
 
     update = async(productReq, pid) => {
-        // const item = await this.getById(pid);
-
-        // if (!item) return;
-
         const updateItem = productsModel.updateOne({_id: {$eq:pid}}, {$set:productReq});  
-        // req.logger.info('Actualización de base de datos PRODUCTS realizada');
-        return updateItem; 
-        
+        return updateItem;         
     }
 
     deleteById = async(pid) => {
-        // const item = await this.getById(pid);
-
-        // if (!item) return;
-        
         const removedItem = productsModel.deleteOne({_id:pid});  
         return removedItem; 
     }

@@ -6,8 +6,6 @@ import { ResultNotFound } from '../../utils/customExceptions.js';
 import jwt from 'jsonwebtoken';
 import config from '../../config/config.js';
 import { RolForbiden } from '../../utils/customExceptions.js';
-import { sendEmail } from '../../services/mail.service.js';
-import { productDeleteNotification } from '../../utils/customHTML.js';
 
 const PRIVATE_KEY = config.secret;
 
@@ -17,11 +15,12 @@ const getProductsPaginate = async (req, res) => {
 
         const result = await productsService.getProductsPaginate(limit, page, sort, category, stock);
 
-        res.status(200).send({result});
+        res.sendSuccess({ result });
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch(error){
-        res.status(500).send({error});
         req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
+
+        res.sendServerError(error);
     }
 
 };
@@ -31,13 +30,12 @@ const getProduct = async(req,res)=> {
         const pid = req.params.pid;
 
         const result = await productsService.getProduct(pid);
-        // result ? res.send({ status: 'success', result }) : res.status(400).send({status: 'error', message:`Producto no encontrado`})
         res.sendSuccess(result);
         req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     } catch (error) {
         req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
         if(error instanceof ResultNotFound){
-            res.sendClientError('Producto no encontrado')
+            return res.sendClientError(error.message);
         }
         res.sendServerError(error);
     }
@@ -49,7 +47,6 @@ const saveProduct = async (req, res) => {
         const { title,description,code,price,status,stock,category,thumbnails,id, owner } = req.body;    
 
         if(!title || !description || !code || !price || !stock || !category){
-            // return res.status(400).send({status: 'error', message:'Valores incompletos'});
             throw CustomError.createError({
                 name: 'ProductError',
                 cause: generateProductErrorInfo({
@@ -83,17 +80,11 @@ const saveProduct = async (req, res) => {
         
         const result = await productsService.saveProduct(product);
 
-        res.send({ result: 'success', result});
+        res.sendSuccess(result);
     }catch(error){
-        res.status(500).send({error});
         req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
+        res.sendServerError(error);
     }
-
-    // const product = req.body;
-    // if(!product.status) {product.status = true};
-    // if(!product.thumbnails) {product.thumbnails = []}
-
-    // await manager.save(product);
 };
 
 const updateProduct = async (req,res)=> {
@@ -102,38 +93,23 @@ const updateProduct = async (req,res)=> {
         const pid = req.params.pid;
 
         const token = req.cookies.token;
-        const decodedToken = jwt.verify(token, PRIVATE_KEY);
 
         const product = await productsService.getProduct(pid);
 
+        const result = await productsService.updateProduct(productReq, pid, token, product);
 
-        if(decodedToken.rol === 'ADMIN') {
-            const result = await productsService.updateProduct(productReq, pid);
-
-            req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
-            return res.send({status: 'sucess', message:'Producto Modificado'});
-        } 
-
-        if(decodedToken.rol === 'PREMIUM' && decodedToken.email === product.owner) {
-            const result = await productsService.updateProduct(productReq, pid);
-            
-            req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
-            return res.send({status: 'sucess', message:'Producto Modificado'});
-        } else {
-            throw new RolForbiden('User does not owner of product');
-        }
-        
+        res.sendSuccess('Producto modificado');
     }catch(error){
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
+
         if(error instanceof ResultNotFound){
-            res.sendClientError('Producto no encontrado')
+            return res.sendClientError(error.message);
         }
         if(error instanceof RolForbiden){
-            res.sendClientError('User does not owner of product')
+            return res.sendClientError(error.message);
         }
         res.status(500).send({status: 'error'});
-        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
-    // await manager.update(productReq, pid);
 };
 
 const deleteProduct =  async (req,res)=> {
@@ -141,19 +117,22 @@ const deleteProduct =  async (req,res)=> {
         const pid = req.params.pid;
         const token = req.cookies.token;
 
-        const result = await productsService.deleteProduct(pid, token)
+        const product = await productsService.getProduct(pid);
 
-        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
+        const result = await productsService.deleteProduct(pid, token, product)
+
         res.sendSuccess(`Producto Eliminado`);  
+        req.logger.info(`Solicitud procesada: ${req.method} ${req.url}`);
     }catch(error){
+        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
+
         if(error instanceof ResultNotFound){
-            res.sendClientError('Producto no encontrado')
+            return res.sendClientError(error.message);
         }
         if(error instanceof RolForbiden){
-            res.sendClientError('Este usuario Premium no es dueño del producto, no lo puede eliminar')
+            return res.sendClientError(error.message);
         }
         res.sendServerError(error);
-        req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()} - ${error}`);
     }
 };
 

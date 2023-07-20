@@ -11,7 +11,6 @@ export default class Manager {
           const items = await promises.readFile(this.ruta, 'utf-8');
           return JSON.parse(items);
         } catch (error) {
-            // req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
             return [];
         }
     }
@@ -90,13 +89,4 @@ export default class Manager {
             return removedItem === undefined;
         }
     }
-
-    // async deleteAll() {
-    //     const products = await this.getAll();
-
-    //     products.length = products.length - products.length;
-
-    //     await promises.writeFile(path, JSON.stringify(products, null, '\t'));
-    // }
-
 }

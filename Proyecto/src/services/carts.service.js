@@ -1,12 +1,8 @@
-// import Carts from '../dao/dbManagers/carts.js' 
-import crypto from 'crypto';
 import CartsRepository from '../repository/carts.repository.js';
-import { transporter } from '../utils.js';
 import config from '../config/config.js';
 import { ResultNotFound, RolForbiden } from '../utils/customExceptions.js';
 import * as productsService from '../services/products.service.js';
 import jwt from 'jsonwebtoken';
-import { generateToken } from '../utils.js';
 import * as sessionsService from '../services/sessions.service.js';
 import Tickets from '../dao/dbManagers/purchase.js';
 import uniqid from 'uniqid';
@@ -15,9 +11,6 @@ import { sendEmail } from './mail.service.js';
 
 const PRIVATE_KEY = config.secret;
 
-const EMAILTO = config.emailTo;
-
-// const cartsManager = new Carts();
 const cartsRepository = new CartsRepository();
 const ticketsManager = new Tickets();
 
@@ -28,6 +21,7 @@ export const saveCart = async () => {
 
 export const getCart = async (cid) => {
     const result = await cartsRepository.getCart(cid);
+
     if(result===null){
         throw new ResultNotFound('cart not found');
     }
@@ -95,7 +89,10 @@ export const saveProductToCartSession = async (pid, token, quantity) => {
 
         const cid = cart._id;
 
-        await cartsService.getCart(cid);
+        const cartDB = await cartsRepository.getCart(cid);
+        if(cartDB===null){
+            throw new ResultNotFound('cart not found');
+        }
 
         const result = await cartsRepository.saveProductToCart(cid, pid, quantity);
 
@@ -103,7 +100,6 @@ export const saveProductToCartSession = async (pid, token, quantity) => {
 };
 
 export const purchaseCart = async (cart, user) => {
-        console.log(cart)
         const productsPurchase = [];
         const ProductsCanceled = [];
 

@@ -3,10 +3,7 @@ import mongoose from 'mongoose';
 const userCollection = 'users';
 
 const usersSchema = new mongoose.Schema({
-    // name: {
-    //   type: String,
-    //   require: true,
-    // },
+
     first_name: {
       type: String,
       require: true,
@@ -43,8 +40,6 @@ const usersSchema = new mongoose.Schema({
     }],
     last_connection: Date
   });
-// const userModel = mongoose.model(userCollection, usersSchema);
 
-// export default userModel;
 
 export const userModel = mongoose.model(userCollection, usersSchema);

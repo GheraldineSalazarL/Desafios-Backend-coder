@@ -1,3 +1,4 @@
+import { ResultNotFound } from '../../utils/customExceptions.js';
 import { cartsModel } from '../models/carts.js'
 
 export default class Carts {
@@ -38,56 +39,31 @@ export default class Carts {
     }  
 
     deleteId = async (cid, pid) => {
-        // const products = cart.products;
-        // const indexProd = products.findIndex(prod => prod.product._id == pid);
-
-        // if(indexProd > -1){
-        //     const result = await cartsModel.updateOne({ _id: cart_id }, { $pull: { products: { product: pid }}});
-        //     return result;
-        // } else{ 
-        //     const result = "error";
-        //     return result;
-        // }
-
         const result = await cartsModel.updateOne({ _id: cid }, { $pull: { products: { product: pid }}});
         return result;
     }
 
     update = async (cid, productsUpdate) => {
-        const cart = await this.getById(cid);
-
-        if (!cart) return;
-
         const result = await cartsModel.updateOne({ _id: cid }, { products: productsUpdate});
-        // req.logger.info('Actualización de base de datos CARTS realizada');
         return result;
     }
 
     updateQuantity = async (cid, pid, quantityUpdate) => {
         const cart = await this.getById(cid);
 
-        if (!cart) return;
-
         const productos = cart.products;
         const indexProd = productos.findIndex(prod => prod.product._id == pid);
 
         if(indexProd > -1){
             const result = await cartsModel.updateOne({_id: {$eq: cid}, "products.product" : pid}, {$inc:{"products.$.quantity" : quantityUpdate.quantity}});
-            // req.logger.info('Actualización de base de datos CARTS realizada');
             return result;
         } else{ 
-            const result = "error";
-            return result;
+            throw new ResultNotFound('Producto no encontrado dentro del carrito');
         }
     }
 
     deleteAll = async (cid) => {
-        const cart = await this.getById(cid);
-
-        if (!cart) return;
-
         const result = await cartsModel.updateOne({ _id: cid }, { products: []});
-        // req.logger.info('Actualización de base de datos CARTS realizada');
         return result;
     }
 }

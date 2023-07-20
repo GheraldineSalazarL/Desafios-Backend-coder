@@ -1,4 +1,3 @@
-// import jwt from 'jsonwebtoken';
 import { Router as expressRouter } from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
@@ -79,9 +78,6 @@ export default class Router {
         const authToken1 = req.headers["authorization"] || req.headers["Authorization"];
         const authToken2 = req.cookies.token;
         
-        // let token = null;
-        // if(authToken1) {token = authToken1.split(" ")[1]};
-        // if(authToken2) {token = authToken2}; 
         const token = ( authToken1 && authToken1.split(" ")[1] ) || authToken2;
             if(!token) return res.status(401).json({ message: 'Not token provided' })
 
@@ -118,7 +114,6 @@ export default class Router {
             try {
                 await callback.apply(this, params);
             } catch (error) {
-                // req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
                 // params[1].status(500).json({ error: error.message });
             }
         })

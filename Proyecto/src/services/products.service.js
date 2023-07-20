@@ -3,7 +3,7 @@ import { ResultNotFound, RolForbiden } from '../utils/customExceptions.js';
 import { sendEmail } from './mail.service.js';
 import jwt from 'jsonwebtoken';
 import config from '../config/config.js';
-import { productDeleteNotification } from '../utils/customHTML.js';
+import { productDeleteNotification, productUpdateNotification } from '../utils/customHTML.js';
 
 const productsManager = new Products();
 const PRIVATE_KEY = config.secret;
@@ -47,7 +47,6 @@ export const getAllProducts = async()=> {
 };
 
 export const getProduct = async(pid)=> {
-    // const product = await manager.getById(pid);
     const result = await productsManager.getById(pid);
     if(result===null){
         throw new ResultNotFound('product not found');
@@ -61,22 +60,32 @@ export const saveProduct = async (product) => {
         return result;
 };
 
-export const updateProduct = async (productReq, pid)=> {
-    const result = await productsManager.update(productReq, pid);
-
-    return result;
-
-    // await manager.update(productReq, pid);
-};
-
-export const deleteProduct =  async (pid, token)=> {
-
+export const updateProduct = async (productReq, pid, token, product)=> {
     const decodedToken = jwt.verify(token, PRIVATE_KEY);
 
-    const product = await productsManager.getById(pid);
-    if(!product){
-        throw new ResultNotFound('product not found');
+    if(decodedToken.rol === 'ADMIN' || (decodedToken.rol === 'PREMIUM' && decodedToken.email === product.owner)) {
+        const result = await productsManager.update(productReq, pid);
+
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if(decodedToken.rol === 'ADMIN' && regex.test(product.owner)){
+            const email = {
+                to: product.owner,
+                subject:  'Producto Modificado', 
+                html: productUpdateNotification
+            }
+            await sendEmail(email);
+        }
+
+        return result;
+    } else {
+        throw new RolForbiden('User does not owner of product');
     }
+};
+
+export const deleteProduct =  async (pid, token, product)=> {
+
+    const decodedToken = jwt.verify(token, PRIVATE_KEY);
 
     if(decodedToken.rol === 'ADMIN' || (decodedToken.rol === 'PREMIUM' && decodedToken.email === product.owner)) {
         const result = await productsManager.deleteById(pid)

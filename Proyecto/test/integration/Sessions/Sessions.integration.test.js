@@ -40,7 +40,6 @@ describe('Testing de Sessions', () => {
             name: cookieResultSplit[0],
             value: cookieResultSplit[1]
         }
-        // console.log(cookie);
 
         expect(cookie.name).to.be.ok.and.eql('token');
         expect(cookie.value).to.be.ok;
@@ -48,7 +47,6 @@ describe('Testing de Sessions', () => {
 
     it('Se debe enviar una cookie en el servicio api/users/currentUser y entregue la info del usuario', async () => {
         const { _body } = await requester.get('/api/users/currentUser').set('Cookie', [`${cookie.name}=${cookie.value}`]);
-        // console.log(_body)
         expect(_body.data.email).to.be.eql('ch@gmail.com');
     })
 })

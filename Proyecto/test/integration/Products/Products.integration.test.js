@@ -25,7 +25,6 @@ describe('Testing de productos', () => {
         }
 
         cookie = localCookie;
-        // console.log(cookie)
     });
 
 
@@ -42,9 +41,7 @@ describe('Testing de productos', () => {
         }
 
         const { statusCode, ok,  _body } = await requester.post('/api/products').send(productMock).set('Cookie', [`${cookie.name}=${cookie.value}`]); 
-        // console.log(statusCode);
-        // console.log(ok);
-        // console.log(_body);
+
         expect(statusCode).to.be.eql(200); 
         expect(_body.result).to.have.property('_id')
     })

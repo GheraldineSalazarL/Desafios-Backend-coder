@@ -28,12 +28,6 @@ const generateToken = (usuario) => {
 }
 
 
-
-const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10)); 
-const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password); 
-
-
-
 //configuración SMTP gmail 
 const transporter = nodemailer.createTransport({
     service: SERVICE, //servicio que vamos a usar  
@@ -63,8 +57,6 @@ const generateProduct = () => {
 
 export {
     __dirname,
-    createHash,
-    isValidPassword,
     hashData,
     compareHashedData,
     generateToken,

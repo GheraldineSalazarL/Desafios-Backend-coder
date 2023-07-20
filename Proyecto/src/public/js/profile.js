@@ -12,7 +12,7 @@ const handleFormSubmit = async (event, form) => {
     const file = fileInput.files[0];
     const newFileName = form.querySelector('input[name="filename"]').value;
 
-    const fileExtension = file.name.split('.').pop(); // Obtenemos la extensión del archivo original
+    const fileExtension = file.name.split('.').pop(); 
     const finalFileName = `${newFileName}.${fileExtension}`;
 
     formData.append('document', file, finalFileName);
@@ -38,7 +38,6 @@ forms.forEach(form => {
     const fileInput = form.querySelector('.fileInput');
 
     fileInput.addEventListener('change', async (event) => {
-        // Enviar el formulario cuando se selecciona un archivo
         await handleFormSubmit(event, form);
     });
 });

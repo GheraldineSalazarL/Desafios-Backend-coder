@@ -66,6 +66,5 @@ if(ENVIROMENT==='production'){
 
 export const addLogger = (req,res, next) => {
     req.logger = logger;
-    // req.logger.error(`${req.method} en ${req.url} - ${new Date().toISOString()}`);
     next();
 }

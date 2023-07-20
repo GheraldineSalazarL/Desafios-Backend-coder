@@ -194,3 +194,34 @@ export const successfulPurchase = (productsPurchased, total, productsUnpurchased
     </div>
 </body>
 </html>`}
+
+export const productUpdateNotification = `<!DOCTYPE html>
+<html>
+<head>
+    <title>Notificación de Producto Modificado</title>
+    <style>
+        .container {
+            width: 300px;
+            padding: 20px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            margin: 0 auto;
+            margin-top: 50px;
+        }
+
+        .success {
+            color: #008000;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="success">Producto Modificado</h2>
+        <p>Un producto de un usuario Premium ha sido modificado por un Administrador</p>
+    </div>
+</body>
+</html>`

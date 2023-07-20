@@ -1,6 +1,5 @@
 import passport from 'passport';
 import local from 'passport-local';
-import { createHash, isValidPassword } from '../utils.js';
 import GitHubStrategy from 'passport-github2';
 import jwt from 'passport-jwt';
 import User from '../dao/dbManagers/users.js'
@@ -18,56 +17,6 @@ const ExtractJWT = jwt.ExtractJwt;
 const usersManager = new User();
 
 const initializePassport = () => {
-
-    //---------------------------Estrategia de autentificación (LocalStrategy)-------------------
-    // passport.use('register', new LocalStrategy({
-    //     passReqToCallback: true,
-    //     usernameField: 'email'
-    // }, async (req, username, password, done) => {
-    //     const { first_name, last_name, email, age, rol } = req.body;
-
-    //     try {
-    //         const user = await usersManager.getByEmail(username); //username=email
-
-    //         if (user) {
-    //             console.log('user already exists');
-    //             return done(null, false);
-    //         }
-
-    //         const newUser = {
-    //             first_name,
-    //             last_name,
-    //             email,
-    //             age,
-    //             rol,
-    //             password: createHash(password)
-    //         }
-
-    //         const result = await usersManager.saveUser(newUser);
-    //         return done(null, result);
-
-    //     } catch (error) {
-    //         return done(`error registering user ${error}`);
-    //     }
-    // }));
-
-    // passport.use('login', new LocalStrategy({
-    //     usernameField: 'email'
-    // }, async (username, password, done) => {
-    //     try {
-    //         const user = await usersManager.getByEmail(username);
-
-    //         if (!user) {
-    //             return done(null, false)
-    //         }
-
-    //         if (!isValidPassword(user, password)) return done(null, false)
-                        
-    //         return done(null, user);
-    //     } catch (error) {
-    //         return done(`User login error ${error}`);
-    //     }
-    // }));
 
     passport.use('github', new GitHubStrategy({
         clientID: CLIENTID,

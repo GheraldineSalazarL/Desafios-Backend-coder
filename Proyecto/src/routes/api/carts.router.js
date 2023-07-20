@@ -1,4 +1,3 @@
-// import { Router } from 'express'
 import { __dirname} from '../../utils.js';
 import { saveCart, getCart, saveProductToCart, deleteProductToCart, updateCart, updateQuantityProductToCart, deleteAllProductsToCart, saveProductToCartSession, purchaseCart } from '../../controllers/api/carts.controller.js';
 import Router from './router.js'
